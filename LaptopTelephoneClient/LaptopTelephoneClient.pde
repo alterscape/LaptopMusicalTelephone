@@ -6,10 +6,17 @@
  * This sketch depends on Andreas Schlegel's oscP5 library,
  * http://www.sojamo.de/libraries/oscP5/index.html
  *
+ * This sketch depends on ProcessingCollider.
+ * http://www.erase.net/projects/p5_sc/.  
+ *
+ * SuperCollider must be running or else nothing of 
+ * acoustic interest will happen.
+ *
  ***/
 
 import oscP5.*;
 import netP5.*;
+import supercollider.*;
 
 // begin configuration
 public static final int SUBDIVISIONS = 16;  // use 16th notes
@@ -32,6 +39,8 @@ private int[] score = new int[SUBDIVISIONS];
 private int _tempo;  // in bpm
 private int _beatNum = 0;
 
+private Synth synth;
+
 
 void setup() {
  
@@ -40,6 +49,11 @@ void setup() {
   // handle the simple messages first.
   oscP5.plug(this,"metro",METRONOME_ADDR);
   oscP5.plug(this,"note",NOTE_ADDR);
+  
+  synth = new Synth("sine");
+  synth.set("amp", 0.5);
+  synth.set("freq",80);
+  synth.create();
 }
 
 void draw() {
@@ -73,26 +87,42 @@ void draw() {
   float beatX = measureLeft + _beatNum * beatW;
   fill(255,0,0,128);
   rect(beatX,MEASURE_TOP,beatW,MEASURE_HEIGHT);
-  
-  
-  
 }
+
+// detects keypresses. 
+
+public void keyPressed() {
+  if (key == ' ') {
+    System.out.println("note");
+  }
+}
+
 
 private void metro(int tempo, int tickCount, int beatNum) {
   _tempo = tempo;
   _beatNum = beatNum;
 }
 
+
+// called by OscP5 when a note message comes in.
 private void note(int note) {
   println("got a note: " + note);
 }
 
+// handles the complex score message, which I couldn't
+// find a good way to handle through Plug, due to the arbitrary
+// length of the message.
 void oscEvent(OscMessage message) {
-  // handle metronome click
   if (message.checkAddrPattern(SCORE_ADDR) == true) {
     // update the score for this node
     for (int i=0;i<SUBDIVISIONS;i++) {
       score[i] = message.get(i).intValue();
     }
   }
+}
+
+// help supercollider clean up its dirty laundry.
+void exit() {
+  synth.free();
+  super.exit();
 }

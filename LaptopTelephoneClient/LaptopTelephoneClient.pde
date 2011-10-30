@@ -19,8 +19,8 @@ import netP5.*;
 import supercollider.*;
 
 /**
- * quantize +/- 1/32nd from the division to that bucket.
- * Ryan will do keyboard input
+ * quantize +/- 1/32nd from the division to that bucket. -- DONE, and generalized (use NoteHappened)
+ * Ryan will do keyboard input -- DONE
  * Report notes to NEXT PERSON IN LINE and SERVER
  * Capability to inject scores at different places in the line.
  * Capability to re-order players during performance.
@@ -56,7 +56,11 @@ public static final int MEASURE_HEIGHT = 50;
 // end configuration
 
 //osc receiver
-private OscP5 oscP5;     
+private OscP5 oscP5;
+
+// osc receiver for multicast messages from server
+private OscP5 _multicastOsc;
+
 //how bright is the background
 private int backgroundBrightness = 0;
 // the received score you're supposed to play
@@ -71,17 +75,32 @@ private int _delay = 1;
 private long _nextSubdiv = _delay;
 private int _subdivNum = 0;
 
-private long _keypressTime;   // declare early for speediness.
+private boolean _playing = true;
+
+// declare early for speediness.
+private long _keypressTime;   
+private long _keyreleaseTime;
 
 private Synth synth;
 
 void setup() {
   frameRate(60);
   size(1024,768);
-   oscP5 = new OscP5(this,OSC_PORT);
+  
+   oscP5 = new OscP5(this,6449);
   // handle the simple messages first.
-  oscP5.plug(this,"metro",METRONOME_ADDR);
+  
   oscP5.plug(this,"note",NOTE_ADDR);
+  
+  // the multicast listener handles metronome events
+  OscProperties multicastProps = new OscProperties();
+  multicastProps.setNetworkProtocol(OscP5.MULTICAST);
+  multicastProps.setRemoteAddress("239.0.0.1",6453);
+  multicastProps.setListeningPort(6453);
+  multicastProps.setEventMethod("multicastOscEvent");
+  
+  _multicastOsc = new OscP5(this,multicastProps);
+  _multicastOsc.plug(this,"metro",METRONOME_ADDR);
   
   synth = new Synth("sine");
   synth.set("amp", 0.5);
@@ -154,10 +173,30 @@ public void keyPressed() {
   }
 }
 
+public void keyReleased() {
+  _keyreleaseTime = millis();
+  if (key == ' ') {
+    noteEnded(_keyreleaseTime);
+  }
+}
+
 private void noteHappened(long whenItHappened) {
    long deltaThisMeasure = _nextSubdiv - whenItHappened;
     // simple quantizing.
-    int whichSubdiv = 0;
+    int whichSubdiv = quantize(deltaThisMeasure);
+    // record the note we just played
+    _myScore[whichSubdiv] = 1;
+    
+    //TODO: notify the next player that a note was played.
+}
+
+
+private void noteEnded(long whenItHappened) {
+  
+}
+
+private int quantize(long deltaThisMeasure) {
+  int whichSubdiv = 0;
     if (deltaThisMeasure < (_delay/2)){
       whichSubdiv = _subdivNum + 1;
       if (whichSubdiv > _myScore.length-1)
@@ -165,7 +204,7 @@ private void noteHappened(long whenItHappened) {
     } else {
       whichSubdiv = _subdivNum;
     }   
-    _myScore[whichSubdiv] = 1;
+    return whichSubdiv;
 }
 
 
@@ -204,3 +243,4 @@ void exit() {
   synth.free();
   super.exit();
 }
+

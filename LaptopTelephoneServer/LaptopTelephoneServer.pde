@@ -27,13 +27,11 @@ void setup() {
   multicastProps.setListeningPort(6451);
   _metroMulticastOsc = new OscP5(this,multicastProps);
   _metroMulticastOsc.setTimeToLive(4);  // set sane time to live to avoid killing the network.
-  remoteLocation = new NetAddress("127.0.0.1",OSC_PORT);
+  _metroMulticastOsc.plug(this,"assignLaptops", HOLALA_ADDR);
              
- //init my telephone networks!
- network = new TelephoneNetwork(); 
- senderAssign = new TelephoneSenderAssignment(network); 
- oscP5.plug(this,"assignLaptops", HOLALA_ADDR);
-
+  //init my telephone networks!
+  network = new TelephoneNetwork(); 
+  senderAssign = new TelephoneSenderAssignment(network); 
 }
 
 public void draw() {

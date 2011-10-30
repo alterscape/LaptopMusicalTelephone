@@ -18,13 +18,6 @@ import oscP5.*;
 import netP5.*;
 import supercollider.*;
 
-// begin configuration
-public static final int SUBDIVISIONS = 16;  // use 16th notes
-public static final int OSC_PORT = 6449;
-public static final String METRONOME_ADDR = "/lorkas/ltm/clock";
-public static final String SCORE_ADDR = "/lorkas/ltm/score";
-public static final String NOTE_ADDR = "/lorkas/ltm/note";
-
 public static final int MEASURE_WIDTH = 975;  //px
 public static final int MEASURE_TOP = 50;
 public static final int MEASURE_HEIGHT = 50;

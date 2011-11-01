@@ -20,21 +20,23 @@ class TelephoneChair
 class TelephoneNetwork
 {
   ArrayList parts; //holds array of chairs for each part
+  int partSize = 3;
   boolean isInit = false; 
   int partsInit = 0;
   
   TelephoneNetwork(int partNum)
   {
       parts = new ArrayList(partNum);  
+      partSize = partNum;
   }  
 
   TelephoneNetwork()
   {
     //default network, 3 X 4... all equal... change for implementation
     this(3);
-    for(int i=0; i<parts.size(); i++)
+    for(int i=0; i<partSize; i++)
     {
-       createPart(0, 4);
+       createPart(i, 4);
     }
     for (int i=0; i<parts.size(); i++)
     {
@@ -45,18 +47,17 @@ class TelephoneNetwork
   void createPart(int partIndex, int chairNum)
   {
     TelephoneChair[] chairs = new TelephoneChair[chairNum]; 
-    for (int i=0; i<chairs.length; i++)
+    for (int i=0; i<chairNum; i++)
     {
       chairs[i] = new TelephoneChair();
     }
 
    //TODO: check initialization more thoroughly, obv.  
     partsInit++;
-    if (parts.size() >= partsInit)
+    if (parts.size() <= partsInit)
     {
       isInit = true;
-    }
-    
+    }    
   }
   
   void defaultPath(TelephoneChair[] chairs, int partIndex)
@@ -111,9 +112,7 @@ class TelephoneSenderAssignment
   {
     //set the ip address of the node
     TelephoneChair chair = network.getNode(part, chairNum); 
-    
     chair.setIP(ip); 
-    
     
     //check if someone is waiting on this node & if so send them that ip
     checkQueue(chair);

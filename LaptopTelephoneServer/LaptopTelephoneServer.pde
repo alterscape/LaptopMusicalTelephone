@@ -11,6 +11,11 @@ private long _nextBeat = 0;
 private int _measureNum = 0;
 private int _thisSubdiv = 0;
 
+String debugOutput = "";
+String debugOutput2 = "";
+String debugOutput3 = "";
+
+
 TelephoneNetwork network;
 TelephoneSenderAssignment senderAssign; 
 
@@ -18,27 +23,36 @@ private List<Pattern> _patterns = new ArrayList<Pattern>();
 
 void setup() {
   
-  size(200,200);
+  size(500,500);
   oscP5 = new OscP5(this,6450);
   // Setup Multicast Properties
   OscProperties multicastProps = new OscProperties();
   multicastProps.setNetworkProtocol(OscP5.MULTICAST);
   multicastProps.setRemoteAddress("239.0.0.1",6453);
   multicastProps.setListeningPort(6451);
-  multicastProps.setEventMethod("multicastOscEvent");
   _metroMulticastOsc = new OscP5(this,multicastProps);
   _metroMulticastOsc.setTimeToLive(4);  // set sane time to live to avoid killing the network.
-  _metroMulticastOsc.plug(this,"assignLaptops", HOLALA_ADDR);
+  remoteLocation = new NetAddress("127.0.0.1",OSC_PORT);
              
-  //init my telephone networks!
-  network = new TelephoneNetwork(); 
-  senderAssign = new TelephoneSenderAssignment(network); 
+ //init my telephone networks!
+ network = new TelephoneNetwork(); 
+ senderAssign = new TelephoneSenderAssignment(network); 
+ oscP5.plug(this,"assignLaptops", HOLALA_ADDR);
+
 }
 
 public void draw() {
  if (millis() > _nextBeat) {
    sendBeat();
  }
+     
+     debugOutput = "gg";
+      fill(0, 102, 153);
+      text(debugOutput, 15, 10);
+      text(debugOutput2, 15, 20);
+      text(debugOutput3, 15, 30);
+
+
 }
 
 /**
@@ -69,19 +83,10 @@ private void sendBeat() {
   }
 }
 
-private void multicastOscEvent(OscMessage message) {
-}
-
 private void sendScore(Object[] measure, NetAddress target) {
   oscP5.send(SCORE_ADDR,
              measure,
              target);
-}
-
-
-public void assignLaptops(String ip, int part, int chair)
-{
-    senderAssign.holala(ip, part, chair);   
 }
 
 /**
@@ -112,4 +117,9 @@ public class Pattern {
   public Object[][] getMeasures() {
     return _measures;
   }
+}
+
+public void assignLaptops(String ip, int part, int chair)
+{
+  senderAssign.holala(ip, part, chair);
 }

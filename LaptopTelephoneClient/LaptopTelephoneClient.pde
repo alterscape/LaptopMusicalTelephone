@@ -102,6 +102,7 @@ void setup() {
   _multicastOsc = new OscP5(this,multicastProps);
   _multicastOsc.plug(this,"metro",METRONOME_ADDR);
   
+<<<<<<< HEAD
 
   
   synth = new Synth("sine");
@@ -110,6 +111,12 @@ void setup() {
   synth.create();
   
   sayHolala();
+=======
+//  synth = new Synth("sine");
+//  synth.set("amp", 0.5);
+//  synth.set("freq",80);
+//  synth.create();
+>>>>>>> daf79e483a67f7d66e43eed6e4fdee3ca2e58578
 }
 
 void draw() {
@@ -172,7 +179,19 @@ public void keyPressed() {
   _keypressTime = millis();
   if (key == ' ') {  // player trying to play.
     noteHappened(_keypressTime);
+    playNote(); 
   }
+}
+
+public void playNote()
+//play a note via Supercollider
+{
+ // buffer.setn(0, width, samples);
+  
+  synth = new Synth("playPotsAndPans");
+  synth.set("trig", 1);
+  synth.set("whichPot", 2); //which sample to trigger... right now there are 4
+  synth.create();  
 }
 
 public void keyReleased() {

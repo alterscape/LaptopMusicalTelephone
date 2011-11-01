@@ -19,31 +19,29 @@ import netP5.*;
 import supercollider.*;
 
 /**
- * Need an actual score. 
- * Need current measure + measure before. 
- * Variable number of measures on the screen at a time.
- * Record notes coming back from clients (if we're feeling ambitious)
- * Add count-in and highlight on currently playing player.
- 
  * quantize +/- 1/32nd from the division to that bucket. -- DONE, and generalized (use NoteHappened)
  * Ryan will do keyboard input -- DONE
  * Report notes to NEXT PERSON IN LINE and SERVER
- * Capability to inject scores at different places in the line. -- DONE
+ * Capability to inject scores at different places in the line.
  * Capability to re-order players during performance.
- * n rows of First, second, third "chairs." -- DONE
- * always inject score to first chair. -- DONE
- * score always goes to second chair, then third chair, then to next first chair. -- DONE
- * Client needs to handshake with server (report chair).  -- DONE
- * Server needs to send a message to each client saying "you send your notes to _____" -- DONE
- * Server needs to send scores to first chairs at specified measures.   -- DONE
+ * n rows of First, second, third "chairs."
+ * always inject score to first chair.
+ * score always goes to second chair, then third chair, then to next first chair.
+
+ * Client needs to handshake with server (report chair).
+ * Server needs to send a message to each client saying "you send your notes to _____"
+ 
+ * Server needs to send scores to first chairs at specified measures. 
  * (so server needs to store the score data).
- * Pattern has n measures, and a starting measure number and a row #. -- DONE
  *
+ * Pattern has n measures, and a starting measure number and a row #.
  *
+ * Record notes coming back from clients (if we're feeling ambitious)
+ *
+ * Add count-in and highlight on currently playing player.
  * Right/left.
  **/
 
-// begin configuration
 public static final int MEASURE_WIDTH = 975;  //px
 public static final int MEASURE_TOP = 50;
 public static final int MEASURE_HEIGHT = 50;
@@ -70,15 +68,11 @@ private int _delay = 1;
 private long _nextSubdiv = _delay;
 private int _subdivNum = 0;
 
-private NetAddress _nextPlayer = null;
-
 private boolean _playing = true;
 
 // declare early for speediness.
 private long _keypressTime;   
 private long _keyreleaseTime;
-
-
 
 private Synth synth;
 
@@ -89,8 +83,7 @@ void setup() {
    oscP5 = new OscP5(this,6449);
   // handle the simple messages first.
   
-  //oscP5.plug(this,"note",NOTE_ADDR);
-  //oscP5.plug(this,"getNextIp",NEXT_NODE_ADDR);
+  oscP5.plug(this,"note",NOTE_ADDR);
   
   // the multicast listener handles metronome events
   OscProperties multicastProps = new OscProperties();
@@ -102,21 +95,8 @@ void setup() {
   _multicastOsc = new OscP5(this,multicastProps);
   _multicastOsc.plug(this,"metro",METRONOME_ADDR);
   
-<<<<<<< HEAD
-
-  
-  synth = new Synth("sine");
-  synth.set("amp", 0.5);
-  synth.set("freq",80);
-  synth.create();
-  
-  sayHolala();
-=======
-//  synth = new Synth("sine");
-//  synth.set("amp", 0.5);
-//  synth.set("freq",80);
-//  synth.create();
->>>>>>> daf79e483a67f7d66e43eed6e4fdee3ca2e58578
+  //okay now load shit so there's not that first delay!!
+  Server.init(); 
 }
 
 void draw() {
@@ -175,6 +155,8 @@ void draw() {
 }
 
 // detects keypresses. 
+
+
 public void keyPressed() {
   _keypressTime = millis();
   if (key == ' ') {  // player trying to play.
@@ -209,11 +191,7 @@ private void noteHappened(long whenItHappened) {
     _myScore[whichSubdiv] = 1;
     
     //TODO: notify the next player that a note was played.
-    if (_nextPlayer != null) {
-      OscMessage note = new OscMessage(NOTE_ADDR);
-      note.add(0);
-      oscP5.send(note,_nextPlayer);
-    }
+    
 }
 
 
@@ -253,11 +231,6 @@ private void note(int note) {
   println("got a note: " + note);
 }
 
-// called by OscP5 when the server tells it what IP to send to next.
-private void getNextIp(String addr) {
-    _nextPlayer = new NetAddress(addr, OSC_PORT);
-}
-
 // handles the complex score message, which I couldn't
 // find a good way to handle through Plug, due to the arbitrary
 // length of the message.
@@ -268,20 +241,6 @@ void oscEvent(OscMessage message) {
       score[i] = message.get(i).intValue();
     }
   }
-}
-
-/***
- * Handle multicast OSC messages that arent' caught otherwise
- */
-void multicastOscEvent(OscMessage message) {
-}
-
-void sayHolala() {
-  OscMessage holalaMsg = new OscMessage(HOLALA_ADDR);
-  holalaMsg.add(NetInfo.lan());
-  holalaMsg.add(0);
-  holalaMsg.add(0);
-  _multicastOsc.send(holalaMsg);
 }
 
 // help supercollider clean up its dirty laundry.

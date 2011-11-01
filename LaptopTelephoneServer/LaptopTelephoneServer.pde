@@ -45,14 +45,6 @@ public void draw() {
  if (millis() > _nextBeat) {
    sendBeat();
  }
-     
-     debugOutput = "gg";
-      fill(0, 102, 153);
-      text(debugOutput, 15, 10);
-      text(debugOutput2, 15, 20);
-      text(debugOutput3, 15, 30);
-
-
 }
 
 /**

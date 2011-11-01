@@ -3,6 +3,15 @@ class TelephoneChair
   String ip = "";
   TelephoneChair nextChair = null; 
   
+  //actually it is good id these here, too
+  int part; int chair;
+  
+  TelephoneChair(int p, int c)
+  {
+    part = p;
+    chair = c; 
+  }
+  
   String getIP(){ return ip; }
   TelephoneChair getNextChair(){ return nextChair; }
   
@@ -14,6 +23,8 @@ class TelephoneChair
   {
     nextChair = chair;
   }
+  int getPart(){ return part; }
+  int getChair(){ return chair; }
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -49,8 +60,9 @@ class TelephoneNetwork
     TelephoneChair[] chairs = new TelephoneChair[chairNum]; 
     for (int i=0; i<chairNum; i++)
     {
-      chairs[i] = new TelephoneChair();
+      chairs[i] = new TelephoneChair(partIndex, i);
     }
+    parts.add(chairs);
 
    //TODO: check initialization more thoroughly, obv.  
     partsInit++;
@@ -80,6 +92,26 @@ class TelephoneNetwork
         chairs[i].setNextChair(getNode(0, 0));
       }
     }
+  }
+  
+  String toString() //for debugging, etc. ... only works if first == last, else it is infinite.
+  {
+    assert( isInit );       
+    TelephoneChair first = ( (TelephoneChair[]) parts.get(0) )[0];
+    String output = nf(first.getPart(), 1) + " " + nf(first.getChair(), 1) + " --> " ; 
+    TelephoneChair next = first.getNextChair(); 
+    int index = 0; 
+    
+    while (first != next)
+    {
+        output += next.getPart() + "," + nf(next.getChair(), 1) + " --> " ; 
+        next = next.getNextChair(); 
+        index++;
+        if (index%5 == 0) output += "\n"; //formatting
+     } 
+     output += nf(first.getPart(), 1) + " " + nf(first.getChair(), 1); 
+     return output;
+
   }
   
   TelephoneChair getNode(int part, int chair)
@@ -145,7 +177,7 @@ class TelephoneSenderAssignment
     //check if someone is waiting on this node
     boolean found = false; 
     int index = 0; 
-    TelephoneChair waitingChair = new TelephoneChair(); //fucking JAVA fucking fuck:'may have been not initialized' my ass
+    TelephoneChair waitingChair = new TelephoneChair(0,0); //fucking JAVA fucking fuck:'may have been not initialized' my ass
     while( index < waitingQueue.size() && !found )
     {
       waitingChair = (TelephoneChair) waitingQueue.get(index);

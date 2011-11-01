@@ -111,7 +111,9 @@ class TelephoneSenderAssignment
   {
     //set the ip address of the node
     TelephoneChair chair = network.getNode(part, chairNum); 
+    
     chair.setIP(ip); 
+    
     
     //check if someone is waiting on this node & if so send them that ip
     checkQueue(chair);

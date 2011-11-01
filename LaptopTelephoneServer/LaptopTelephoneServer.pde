@@ -25,6 +25,7 @@ void setup() {
   multicastProps.setNetworkProtocol(OscP5.MULTICAST);
   multicastProps.setRemoteAddress("239.0.0.1",6453);
   multicastProps.setListeningPort(6451);
+  multicastProps.setEventMethod("multicastOscEvent");
   _metroMulticastOsc = new OscP5(this,multicastProps);
   _metroMulticastOsc.setTimeToLive(4);  // set sane time to live to avoid killing the network.
   _metroMulticastOsc.plug(this,"assignLaptops", HOLALA_ADDR);
@@ -68,10 +69,19 @@ private void sendBeat() {
   }
 }
 
+private void multicastOscEvent(OscMessage message) {
+}
+
 private void sendScore(Object[] measure, NetAddress target) {
   oscP5.send(SCORE_ADDR,
              measure,
              target);
+}
+
+
+public void assignLaptops(String ip, int part, int chair)
+{
+    senderAssign.holala(ip, part, chair);   
 }
 
 /**
@@ -102,9 +112,4 @@ public class Pattern {
   public Object[][] getMeasures() {
     return _measures;
   }
-}
-
-public void assignLaptops(String ip, int part, int chair)
-{
-  senderAssign.holala(ip, part, chair);
 }

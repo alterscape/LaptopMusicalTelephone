@@ -89,8 +89,8 @@ void setup() {
    oscP5 = new OscP5(this,6449);
   // handle the simple messages first.
   
-  oscP5.plug(this,"note",NOTE_ADDR);
-  oscP5.plug(this,"getNextIp",NEXT_NODE_ADDR);
+  //oscP5.plug(this,"note",NOTE_ADDR);
+  //oscP5.plug(this,"getNextIp",NEXT_NODE_ADDR);
   
   // the multicast listener handles metronome events
   OscProperties multicastProps = new OscProperties();
@@ -102,12 +102,14 @@ void setup() {
   _multicastOsc = new OscP5(this,multicastProps);
   _multicastOsc.plug(this,"metro",METRONOME_ADDR);
   
-  sayHolala();
+
   
   synth = new Synth("sine");
   synth.set("amp", 0.5);
   synth.set("freq",80);
   synth.create();
+  
+  sayHolala();
 }
 
 void draw() {
@@ -249,9 +251,17 @@ void oscEvent(OscMessage message) {
   }
 }
 
+/***
+ * Handle multicast OSC messages that arent' caught otherwise
+ */
+void multicastOscEvent(OscMessage message) {
+}
+
 void sayHolala() {
   OscMessage holalaMsg = new OscMessage(HOLALA_ADDR);
   holalaMsg.add(NetInfo.lan());
+  holalaMsg.add(0);
+  holalaMsg.add(0);
   _multicastOsc.send(holalaMsg);
 }
 

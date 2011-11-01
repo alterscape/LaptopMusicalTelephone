@@ -42,13 +42,6 @@ import supercollider.*;
  * Right/left.
  **/
 
-// begin configuration
-public static final int SUBDIVISIONS = 16;  // use 16th notes
-public static final int OSC_PORT = 6449;
-public static final String METRONOME_ADDR = "/lorkas/ltm/clock";
-public static final String SCORE_ADDR = "/lorkas/ltm/score";
-public static final String NOTE_ADDR = "/lorkas/ltm/note";
-
 public static final int MEASURE_WIDTH = 975;  //px
 public static final int MEASURE_TOP = 50;
 public static final int MEASURE_HEIGHT = 50;
@@ -102,10 +95,10 @@ void setup() {
   _multicastOsc = new OscP5(this,multicastProps);
   _multicastOsc.plug(this,"metro",METRONOME_ADDR);
   
-  synth = new Synth("sine");
-  synth.set("amp", 0.5);
-  synth.set("freq",80);
-  synth.create();
+//  synth = new Synth("sine");
+//  synth.set("amp", 0.5);
+//  synth.set("freq",80);
+//  synth.create();
 }
 
 void draw() {
@@ -170,7 +163,19 @@ public void keyPressed() {
   _keypressTime = millis();
   if (key == ' ') {  // player trying to play.
     noteHappened(_keypressTime);
+    playNote(); 
   }
+}
+
+public void playNote()
+//play a note via Supercollider
+{
+ // buffer.setn(0, width, samples);
+  
+  synth = new Synth("playPotsAndPans");
+  synth.set("trig", 1);
+  synth.set("whichPot", 2); //which sample to trigger... right now there are 4
+  synth.create();  
 }
 
 public void keyReleased() {

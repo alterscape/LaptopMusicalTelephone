@@ -77,20 +77,39 @@ class TelephoneNetwork
     assert( isInit );
     
     //set-up default path
-    for (int i=0; i<chairs.length; i++)
+    for (int partIndex=0; partIndex<parts.size(); partIndex++)
     {
-      if(i<chairs.length-1)
+      for (int i=0; i<chairs.length; i++)
       {
-        chairs[i].setNextChair(getNode(partIndex, i+1));
+        if(i<chairs.length-1)
+        {
+          chairs[i].setNextChair(getNode(partIndex, i+1));
+        }
+        else if(partIndex < parts.size()-1 )
+        {
+          chairs[i].setNextChair(getNode(partIndex+1, 0));
+        }
+        else
+        {
+          chairs[i].setNextChair(getNode(0, 0));
+        }
       }
-      else if(partIndex < parts.size()-1 )
-      {
-        chairs[i].setNextChair(getNode(partIndex+1, 0));
-      }
-      else
-      {
-        chairs[i].setNextChair(getNode(0, 0));
-      }
+    }
+  }
+  
+  void pathThroughChairs() //from first chairs to last chairs
+  {
+     assert( isInit );
+    
+    //set-up default path
+    for (int i=0; i<parts().size(); i++)
+    { 
+        if(i<parts.size()-1)
+        {
+          
+        }
+
+    
     }
   }
   

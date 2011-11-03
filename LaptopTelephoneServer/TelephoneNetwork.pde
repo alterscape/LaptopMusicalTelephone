@@ -133,6 +133,7 @@ class TelephoneNetwork
   }
   
   TelephoneChair getNode(int part, int chair)
+  //returns the node at a particular part & chair
   {
     assert( isInit ); 
     assert( (part < parts.size()) ) ;
@@ -182,6 +183,7 @@ class TelephoneSenderAssignment
   
   void sendChairNextIP(TelephoneChair chair)
   {
+    //sends the next chair IP, THEN the server IP to the client that needs them.
     OscMessage msg = new OscMessage(NEXT_NODE_ADDR);
     msg.add(chair.getNextChair().getIP());
     msg.add(NetInfo.lan()); 

@@ -30,14 +30,16 @@ void setup() {
   multicastProps.setNetworkProtocol(OscP5.MULTICAST);
   multicastProps.setRemoteAddress("239.0.0.1",6453);
   multicastProps.setListeningPort(6451);
+  multicastProps.setEventMethod("multicastOscEvent");
   _metroMulticastOsc = new OscP5(this,multicastProps);
+  _metroMulticastOsc.plug(this,"assignLaptops", HOLALA_ADDR);
   _metroMulticastOsc.setTimeToLive(4);  // set sane time to live to avoid killing the network.
   remoteLocation = new NetAddress("127.0.0.1",OSC_PORT);
              
  //init my telephone networks!
  network = new TelephoneNetwork(); 
  senderAssign = new TelephoneSenderAssignment(network); 
- oscP5.plug(this,"assignLaptops", HOLALA_ADDR);
+
 
 }
 
@@ -48,6 +50,7 @@ public void draw() {
  text(network.toString(), 15, 15);
 
 }
+
 
 /**
  * This sends out the beat.
@@ -75,6 +78,10 @@ private void sendBeat() {
       }
     }
   }
+}
+
+private void multicastOscEvent(OscMessage mess) {
+  //println(mess);
 }
 
 private void sendScore(Object[] measure, NetAddress target) {
@@ -115,5 +122,6 @@ public class Pattern {
 
 public void assignLaptops(String ip, int part, int chair)
 {
+  println("laptops assigned!");
   senderAssign.holala(ip, part, chair);
 }

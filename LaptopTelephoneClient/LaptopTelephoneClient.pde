@@ -67,6 +67,8 @@ private int _beatNum = 0;
 private int _delay = 1;
 private long _nextSubdiv = _delay;
 private int _subdivNum = 0;
+private NetAddress _nextPlayerAddr;
+private NetAddress _serverAddr;
 
 private boolean _playing = true;
 
@@ -84,6 +86,7 @@ void setup() {
   // handle the simple messages first.
   
   oscP5.plug(this,"note",NOTE_ADDR);
+  oscP5.plug(this,"setNextNodeAddress",NEXT_NODE_ADDR);
   
   // the multicast listener handles metronome events
   OscProperties multicastProps = new OscProperties();
@@ -188,6 +191,8 @@ private void noteHappened(long whenItHappened) {
    long deltaThisMeasure = _nextSubdiv - whenItHappened;
     // simple quantizing.
     int whichSubdiv = quantize(deltaThisMeasure);
+    if (whichSubdiv > SUBDIVISIONS-1)
+      whichSubdiv = SUBDIVISIONS-1;
     // record the note we just played
     _myScore[whichSubdiv] = 1;
     
@@ -244,10 +249,30 @@ void oscEvent(OscMessage message) {
   }
 }
 
+/**
+ * Says hello to the server, so the server knows the client is here.
+ **/
+
 void sayHolala() {
+  println("Saying holala!");
   OscMessage holalaMsg = new OscMessage(HOLALA_ADDR);
   holalaMsg.add(NetInfo.lan());
+  holalaMsg.add(0);
+  holalaMsg.add(0);
   _multicastOsc.send(holalaMsg);
+}
+
+/**
+ * This is how the server tells the client who to talk to next, and also
+ * where it is.
+ **/
+
+void setNextClientAddress(String nextIp, String serverIp) {
+  println("next client address is: " + nextIp);
+  println("server address is: " + serverIp);
+  _nextPlayerAddr = new NetAddress(nextIp,OSC_PORT);
+  _serverAddr = new NetAddress(serverIp,OSC_PORT);
+  
 }
 
 // help supercollider clean up its dirty laundry.

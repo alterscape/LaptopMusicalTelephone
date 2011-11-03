@@ -49,7 +49,7 @@ class TelephoneNetwork
     {
        createPart(i, 4);
     }
-    defaultPath( (TelephoneChair[]) parts.get(i) );
+    defaultPath();
     
   }
   
@@ -70,13 +70,14 @@ class TelephoneNetwork
     }    
   }
   
-  void defaultPath( TelephoneChair[] chairs )
+  void defaultPath()
   {
     assert( isInit );
     
     //set-up default path
     for (int partIndex=0; partIndex<parts.size(); partIndex++)
     {
+      TelephoneChair[] chairs = (TelephoneChair[]) parts.get(partIndex);
       for (int i=0; i<chairs.length; i++)
       {
         if(i<chairs.length-1)
@@ -100,7 +101,7 @@ class TelephoneNetwork
      assert( isInit );
     
     //set-up default path
-    for (int i=0; i<parts().size(); i++)
+    for (int i=0; i<parts.size(); i++)
     { 
         if(i<parts.size()-1)
         {

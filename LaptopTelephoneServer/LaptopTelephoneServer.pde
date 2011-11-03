@@ -45,6 +45,8 @@ public void draw() {
  if (millis() > _nextBeat) {
    sendBeat();
  }
+ text(network.toString(), 15, 15);
+
 }
 
 /**

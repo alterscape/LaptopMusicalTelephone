@@ -54,6 +54,7 @@ class TelephoneNetwork
   }
   
   void createPart(int partIndex, int chairNum)
+  //create a part with a particular 
   {
     TelephoneChair[] chairs = new TelephoneChair[chairNum]; 
     for (int i=0; i<chairNum; i++)

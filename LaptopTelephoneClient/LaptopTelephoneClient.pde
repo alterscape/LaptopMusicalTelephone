@@ -97,6 +97,7 @@ void setup() {
   
   //okay now load shit so there's not that first delay!!
   Server.init(); 
+  sayHolala();
 }
 
 void draw() {
@@ -243,9 +244,14 @@ void oscEvent(OscMessage message) {
   }
 }
 
+void sayHolala() {
+  OscMessage holalaMsg = new OscMessage(HOLALA_ADDR);
+  holalaMsg.add(NetInfo.lan());
+  _multicastOsc.send(holalaMsg);
+}
+
 // help supercollider clean up its dirty laundry.
 void exit() {
-  synth.free();
   super.exit();
 }
 

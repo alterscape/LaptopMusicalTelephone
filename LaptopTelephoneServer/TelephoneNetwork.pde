@@ -184,6 +184,7 @@ class TelephoneSenderAssignment
   {
     OscMessage msg = new OscMessage(NEXT_NODE_ADDR);
     msg.add(chair.getNextChair().getIP());
+    msg.add(NetInfo.lan()); 
     
     NetAddress laptop_location = new NetAddress(chair.getIP(),OSC_PORT);
     

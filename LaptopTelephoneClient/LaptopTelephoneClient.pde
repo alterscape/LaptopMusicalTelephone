@@ -95,7 +95,7 @@ void setup() {
   _multicastOsc = new OscP5(this,multicastProps);
   _multicastOsc.plug(this,"metro",METRONOME_ADDR);
   
-  //okay now load shit so there's not that first delay!!
+  //okay now load shit so there's not that first delay!! (in Supercollider code)
   Server.init(); 
 }
 

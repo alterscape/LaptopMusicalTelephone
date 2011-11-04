@@ -174,6 +174,7 @@ class TelephoneSenderAssignment
     {
       //TODO: send status message that we're waiting.
       waitingQueue.add(chair); 
+      sendChairWaitingMessage(chair);
     }
     else
     {
@@ -192,6 +193,14 @@ class TelephoneSenderAssignment
     NetAddress laptop_location = new NetAddress(chair.getIP(),OSC_PORT);
     
     oscP5.send(msg, laptop_location); 
+  }
+  
+  void sendChairWaitingMessage(TelephoneChair chair)
+  {
+        OscMessage msg = new OscMessage(UR_WAITING_ADDR);
+        NetAddress laptop_location = new NetAddress(chair.getIP(),OSC_PORT);
+
+        oscP5.send(msg, laptop_location);  
   }
   
   void checkQueue(TelephoneChair chair)

@@ -111,6 +111,7 @@ void setup() {
   
   oscP5.plug(this,"note",NOTE_ADDR);
   oscP5.plug(this,"setNextNodeAddress",NEXT_NODE_ADDR);
+  oscP5.plug(this, "waitingForNextIp", UR_WAITING_ADDR);
   
   // the multicast listener handles metronome events
   OscProperties multicastProps = new OscProperties();
@@ -303,4 +304,9 @@ void setNextClientAddress(String nextIp, String serverIp) {
 //void exit() {
 //  super.exit();
 //}
+
+void waitingForNextIp()
+{
+  //give some UI message here
+}
 

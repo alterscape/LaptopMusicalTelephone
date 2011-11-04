@@ -99,11 +99,11 @@ void setup() {
   
   // set up ControlP5 for UI
   controlP5 = new ControlP5(this);
-  chairBox = controlP5.addNumberbox("Chair",_chairNum,50,200,100,14);
+  chairBox = controlP5.addNumberbox("chair",_chairNum,50,200,100,14);
   chairBox.setMultiplier(1);
-  rowBox = controlP5.addNumberbox("Row",_rowNum,50,228,100,14);
+  rowBox = controlP5.addNumberbox("row",_rowNum,50,228,100,14);
   chairBox.setMultiplier(1);
-  commitButton = controlP5.addButton("Commit",1,50,256,100,14);
+  commitButton = controlP5.addButton("commit",1,50,256,100,14);
   
    
   oscP5 = new OscP5(this,6449);
@@ -125,7 +125,6 @@ void setup() {
   
   //okay now load shit so there's not that first delay!! (in Supercollider code)
   Server.init(); 
-  sayHolala();
 }
 
 void draw() {
@@ -308,5 +307,23 @@ void setNextClientAddress(String nextIp, String serverIp) {
 void waitingForNextIp()
 {
   //give some UI message here
+  println("Waiting for next IP!");
+}
+
+// UI CODE STARTS HERE
+public void commit(int code) {
+  
+  println("Committing!");
+  sayHolala();
+}
+
+public void chair(int chairNum) {
+  _chairNum = chairNum;
+  println("set chair num: " + _chairNum);
+}
+
+public void row(int rowNum) {
+  _rowNum = rowNum;
+  println("set row num: " + _rowNum);
 }
 

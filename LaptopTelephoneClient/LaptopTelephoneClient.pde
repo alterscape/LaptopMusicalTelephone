@@ -1,5 +1,6 @@
+
 /***
- * Laptop Telephone Music Client 
+ * Telephone Tango Client 
  * by Courtney Brown, Meng Chen and Ryan Spicer
  * for LOrkAS, 2011.
  *
@@ -7,7 +8,10 @@
  * http://www.sojamo.de/libraries/oscP5/index.html
  *
  * This sketch depends on ProcessingCollider.
- * http://www.erase.net/projects/p5_sc/.  
+ * http://www.erase.net/projects/p5_sc/. 
+ *
+ * This sketch depends on ControlP5 for UI
+ * http://www.sojamo.de/libraries/controlP5 
  *
  * SuperCollider must be running or else nothing of 
  * acoustic interest will happen.
@@ -17,6 +21,7 @@
 import oscP5.*;
 import netP5.*;
 import supercollider.*;
+import controlP5.*;
 
 /**
  * quantize +/- 1/32nd from the division to that bucket. -- DONE, and generalized (use NoteHappened)
@@ -30,6 +35,7 @@ import supercollider.*;
 
  * Client needs to handshake with server (report chair).
  * Server needs to send a message to each client saying "you send your notes to _____"
+ * Chair/Seat UI
  
  * Server needs to send scores to first chairs at specified measures. 
  * (so server needs to store the score data).
@@ -70,6 +76,15 @@ private int _subdivNum = 0;
 private NetAddress _nextPlayerAddr;
 private NetAddress _serverAddr;
 
+// UI stuff
+private ControlP5 controlP5;
+private Numberbox chairBox;
+private Numberbox rowBox;
+private Button commitButton;
+
+private int _rowNum;
+private int _chairNum;
+
 private boolean _playing = true;
 
 // declare early for speediness.
@@ -82,7 +97,16 @@ void setup() {
   frameRate(60);
   size(1024,768);
   
-   oscP5 = new OscP5(this,6449);
+  // set up ControlP5 for UI
+  controlP5 = new ControlP5(this);
+  chairBox = controlP5.addNumberbox("Chair",_chairNum,50,200,100,14);
+  chairBox.setMultiplier(1);
+  rowBox = controlP5.addNumberbox("Row",_rowNum,50,228,100,14);
+  chairBox.setMultiplier(1);
+  commitButton = controlP5.addButton("Commit",1,50,256,100,14);
+  
+   
+  oscP5 = new OscP5(this,6449);
   // handle the simple messages first.
   
   oscP5.plug(this,"note",NOTE_ADDR);
@@ -276,7 +300,7 @@ void setNextClientAddress(String nextIp, String serverIp) {
 }
 
 // help supercollider clean up its dirty laundry.
-void exit() {
-  super.exit();
-}
+//void exit() {
+//  super.exit();
+//}
 

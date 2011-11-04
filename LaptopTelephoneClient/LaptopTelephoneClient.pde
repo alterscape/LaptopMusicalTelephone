@@ -31,10 +31,9 @@ import controlP5.*;
  * Capability to re-order players during performance.
  * n rows of First, second, third "chairs."
  * always inject score to first chair.
- * score always goes to second chair, then third chair, then to next first chair.
-
- * Client needs to handshake with server (report chair).
- * Server needs to send a message to each client saying "you send your notes to _____"
+ * score always goes to second chair, then third chair, then to next first chair. 
+ * Client needs to handshake with server (report chair). DONE
+ * Server needs to send a message to each client saying "you send your notes to _____" DONE
  * Chair/Seat UI
  
  * Server needs to send scores to first chairs at specified measures. 
@@ -49,8 +48,16 @@ import controlP5.*;
  **/
 
 public static final int MEASURE_WIDTH = 975;  //px
-public static final int MEASURE_TOP = 50;
+public static final int MEASURE_TOP = 150;
 public static final int MEASURE_HEIGHT = 50;
+
+public static final int STATE_PRE_HOLALA = 0;
+public static final int STATE_WAITING = 1;
+public static final int STATE_READY = 2;
+public static final int STATE_ERROR = 3;
+public static final int STATE_COMMUNICATING = 4; 
+
+public int currentState = STATE_PRE_HOLALA;
 
 // end configuration
 
@@ -66,6 +73,8 @@ private int backgroundBrightness = 0;
 private int[] score = new int[SUBDIVISIONS];  
 // the score you actually played.
 private int[] _myScore = new int[SUBDIVISIONS];
+
+private int[] _theirScore = new int [SUBDIVISIONS];
 // save the scores you actually played in past measures
 private List<int[]> _myScores = new ArrayList<int[]>();
 private int _tempo = 120;  // in bpm
@@ -136,10 +145,36 @@ void draw() {
     }
   }
   
-  // made this a variable, because I think we might want to change it such that
-  // peoples' faces are more brightly lit when they're playing.
-  background(backgroundBrightness);
+  String statusMessage = "You are Chair " + _chairNum + " in row " + _rowNum + ".";
   
+  switch(currentState) {
+    case STATE_PRE_HOLALA:
+      background(255,255,0);
+      statusMessage = "You are NOT connected. Get your chair and row number from the conductor and then commit!";
+      break;
+    case STATE_WAITING:
+      background(255,255,100);
+      statusMessage = "You are now waiting for the server to tell you who to talk to! You are Chair " + _chairNum + " in row " + _rowNum + ".";
+      break;
+    case STATE_COMMUNICATING:
+      background(255,255,100);
+      statusMessage = "Waiting for the server to acknowledge you said something.";
+      break;
+    case STATE_ERROR:
+      background(255,0,0);
+      break;
+    default:
+      // made this a variable, because I think we might want to change it such that
+      // peoples' faces are more brightly lit when they're playing.
+      background(backgroundBrightness);
+    
+  }
+  
+  fill(0);
+  color(0);
+  text(statusMessage,300,300); 
+ 
+ 
   fill(128,128,128);
   stroke(255,255,255);
   float measureLeft = (width-MEASURE_WIDTH)/2.0;
@@ -259,6 +294,7 @@ private void metro(int tempo, int tickCount, int beatNum) {
 // called by OscP5 when a note message comes in.
 private void note(int note) {
   println("got a note: " + note);
+  _theirScore[beatNum] == 1;
 }
 
 // handles the complex score message, which I couldn't
@@ -284,6 +320,7 @@ void sayHolala() {
   holalaMsg.add(0);
   holalaMsg.add(0);
   _multicastOsc.send(holalaMsg);
+  currentState = STATE_COMMUNICATING;
 }
 
 /**
@@ -294,6 +331,7 @@ void sayHolala() {
 void setNextClientAddress(String nextIp, String serverIp) {
   println("next client address is: " + nextIp);
   println("server address is: " + serverIp);
+  currentState = STATE_READY;
   _nextPlayerAddr = new NetAddress(nextIp,OSC_PORT);
   _serverAddr = new NetAddress(serverIp,OSC_PORT);
   
@@ -306,6 +344,7 @@ void setNextClientAddress(String nextIp, String serverIp) {
 
 void waitingForNextIp()
 {
+  currentState = STATE_WAITING;
   //give some UI message here
   println("Waiting for next IP!");
 }
@@ -314,6 +353,10 @@ void waitingForNextIp()
 public void commit(int code) {
   
   println("Committing!");
+  // hide the UI.
+  chairBox.hide();
+  rowBox.hide();
+  commitButton.hide();
   sayHolala();
 }
 

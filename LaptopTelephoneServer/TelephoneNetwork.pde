@@ -197,10 +197,17 @@ class TelephoneSenderAssignment
   
   void sendChairWaitingMessage(TelephoneChair chair)
   {
-        OscMessage msg = new OscMessage(UR_WAITING_ADDR);
-        NetAddress laptop_location = new NetAddress(chair.getIP(),OSC_PORT);
+     OscMessage msg = new OscMessage(UR_WAITING_ADDR);
+     NetAddress laptop_location = new NetAddress(chair.getIP(),OSC_PORT);
 
-        oscP5.send(msg, laptop_location);  
+     oscP5.send(msg, laptop_location);  
+  }
+  
+  //destroy everything and do it again
+  void reset()
+  {
+    network = new TelephoneNetwork();
+    waitingQueue.empty();
   }
   
   void checkQueue(TelephoneChair chair)

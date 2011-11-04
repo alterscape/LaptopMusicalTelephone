@@ -255,8 +255,14 @@ private void noteHappened(long whenItHappened) {
     // record the note we just played
     _myScore[whichSubdiv] = 1;
     
+    if ( _nextPlayerAddr != null)
+    {
+      OscMessage noteMess = new OscMessage(NOTE_ADDR);
+      noteMess.add(1);
+      oscP5.send(noteMess,_nextPlayerAddr);
+    }
     //TODO: notify the next player that a note was played.
-    
+    playNote();
 }
 
 

@@ -5,9 +5,9 @@
 \deftab720
 \pard\pardeftab720
 
-\f0\fs24 \cf2 //Courtney Brown --> my standard synth shit for TelephoneTango\
+\f0\fs24 \cf2 //Courtney Brown --> my standard synth shit for TelephoneTango\cf3 \
 \
-//not used yet.  will be used as well, fyi\cf3 \
+\cf2 //not used yet.  will be used as well, fyi\cf3 \
 (\
 \cf4 SynthDef\cf3 (\cf5 \\audio_reson_out\cf3 , \{ \cf4 |inBus = 1, bufnum = 0, outbus = 0, amp = 0.5, loop = 0,\
                         pan = 0, rate = 1.0, pitch_index = 1, bandwidth_ratio = 0.01|\cf3 \
@@ -35,6 +35,10 @@
 \}).load(s);\
 )\
 \
+\cf2 //Test Tone --> is my supercollider shiz werkin'?\cf3 \
+(\
+\cf4 \{SinOsc\cf3 .ar(440)\}.play;\
+)\
 \
 \cf2 //currently used.\cf3 \
 (\

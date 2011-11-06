@@ -4,12 +4,12 @@
 
 public class Measure {
   private int _startingMeasure;
-  private List<Player> _players;
-  private Object[] _notes;
+  private List<PlayerOffset> _players;
+  private int[] _notes;
   
-  public Pattern(int startingMeasure,
+  public Measure(int startingMeasure,
                  List<PlayerOffset> players,
-                 Object[] notes) {
+                 int[] notes) {
     _startingMeasure = startingMeasure;
     _players = players;
     _notes = notes;
@@ -23,7 +23,7 @@ public class Measure {
     return _players;
   }
   
-  public Object[] getNotes() {
-    return _measure;
+  public int[] getNotes() {
+    return _notes;
   }
 }

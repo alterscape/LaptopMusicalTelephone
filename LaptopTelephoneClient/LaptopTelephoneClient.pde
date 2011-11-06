@@ -72,7 +72,6 @@ private int[] score = new int[SUBDIVISIONS];
 // the score you actually played.
 private int[] _myScore = new int[SUBDIVISIONS];
 
-private int[][] _theirScore = new int [MAX_OFFSET][SUBDIVISIONS];
 // save the scores you actually played in past measures
 private List<int[]> _myScores = new ArrayList<int[]>();
 private int _tempo = 120;  // in bpm
@@ -83,7 +82,7 @@ private int _subdivNum = 0;
 private NetAddress _nextPlayerAddr;
 private NetAddress _serverAddr;
 
-private List<Measure> upcomingMeasures
+private List<Measure> upcomingMeasures;
 
 // UI stuff
 private ControlP5 controlP5;
@@ -298,7 +297,7 @@ private void metro(int tempo, int tickCount, int beatNum) {
 private void note(int note) {
   println("got a note: " + note);
   // FIXME this logic is dumb.
-  _theirScore[_measureNum+_offset][_beatNum] = 1;
+  //_theirScore[_measureNum+_offset][_beatNum] = 1;
 }
 
 // handles the complex score message, which I couldn't
@@ -307,12 +306,12 @@ private void note(int note) {
 void oscEvent(OscMessage message) {
   if (message.checkAddrPattern(SCORE_ADDR) == true) {
     _offset = message.get(0).intValue();
-    _scoreTTL = message.get(1).intValue();
-    int numMeasures = message.get(2);
+    int _scoreTTL = message.get(1).intValue();
+    int numMeasures = message.get(2).intValue();
     // update the score for this node
     for(int j=0;j<numMeasures;j++) {
       for (int i=0;i<SUBDIVISIONS;i++) {
-        score[j][i] = message.get(i+3).intValue();
+        //score[j][i] = message.get(i+3).intValue();
       }
     }
   }

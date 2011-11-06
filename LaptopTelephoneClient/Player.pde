@@ -3,7 +3,7 @@ public class PlayerOffset {
   public int _offsetSixteenths;
   public String _addr;
   
-  public Player(int offsetM, int offsetS, String addr) {
+  public PlayerOffset(int offsetM, int offsetS, String addr) {
     _offsetMeasures = offsetM;
     _offsetSixteenths = offsetS;
     _addr = addr;

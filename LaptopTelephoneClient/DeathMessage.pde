@@ -6,13 +6,13 @@
 // the measure we got is displayed at m- (4 or the offset, whichever is less).
 
 public void assembleMessage(Measure measure) {
-  Object[] notes = measure.getNotes(); 
+  int[] notes = measure.getNotes(); 
   List<PlayerOffset> nextPlayers = measure.getPlayers();
   
   OscMessage death = new OscMessage("/lorkas/ltm/death");
-  death.add(aMeasure.length);
-  for(int i=0;i<aMeasure.length;i++) {
-    death.add((int)aMeasure[i]);
+  death.add(notes.length);
+  for(int i=0;i<notes.length;i++) {
+    death.add(notes[i]);
   }
   
   // we need a list of players who are going to get this
@@ -32,7 +32,7 @@ public void assembleMessage(Measure measure) {
 public void disassembleMessage(OscMessage death) {
   //setup variables
   int[] thisMeasure;
-  List<Player> thesePlayers = new ArrayList<Player>();
+  List<PlayerOffset> thesePlayers = new ArrayList<PlayerOffset>();
   
   // decode crazy shit yo
   int numSubdivs = death.get(0).intValue();
@@ -43,10 +43,10 @@ public void disassembleMessage(OscMessage death) {
   int numPlayers = death.get(1+numSubdivs).intValue();
   
   for (int i=0;i<numPlayers;i++) {
-    int offsetM = death.get(2+numSubdivs+(i*3).intValue();
-    int offsetS = death.get(2+numSubdivs+(i*3+1).intValue();
-    String addr = death.get(2+numSubdivs+(i*3+2).intValue();
-    Player newPlyr = new Player(offsetM,offsetS,addr);
+    int offsetM = death.get(2+numSubdivs+(i*3)).intValue();
+    int offsetS = death.get(2+numSubdivs+(i*3+1)).intValue();
+    String addr = death.get(2+numSubdivs+(i*3+2)).stringValue();
+    PlayerOffset newPlyr = new PlayerOffset(offsetM,offsetS,addr);
     thesePlayers.add(newPlyr);    
   }
 }

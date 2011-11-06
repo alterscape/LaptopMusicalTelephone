@@ -304,9 +304,14 @@ private void note(int note) {
 // length of the message.
 void oscEvent(OscMessage message) {
   if (message.checkAddrPattern(SCORE_ADDR) == true) {
+    _offset = message.get(0).intValue();
+    _scoreTTL = message.get(1).intValue();
+    int numMeasures = message.get(2);
     // update the score for this node
-    for (int i=0;i<SUBDIVISIONS;i++) {
-      score[i] = message.get(i).intValue();
+    for(int j=0;j<numMeasures;j++) {
+      for (int i=0;i<SUBDIVISIONS;i++) {
+        score[j][i] = message.get(i+3).intValue();
+      }
     }
   }
 }
@@ -397,6 +402,8 @@ public void drawMeasure(int leftPx, int topPx, int widthPx, int heightPx, int[] 
       fill(0,255,0,128);
       rect(beatX,topPx,beatW,heightPx);
     }
-    
   }
 }
+
+
+

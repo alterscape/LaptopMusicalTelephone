@@ -83,6 +83,8 @@ private int _subdivNum = 0;
 private NetAddress _nextPlayerAddr;
 private NetAddress _serverAddr;
 
+private List<Measure> upcomingMeasures
+
 // UI stuff
 private ControlP5 controlP5;
 private Numberbox chairBox;

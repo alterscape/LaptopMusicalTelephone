@@ -2,13 +2,13 @@
  * 
  **/
 
-public class Pattern {
+public class Measure {
   private int _startingMeasure;
   private List<Player> _players;
   private Object[] _notes;
   
   public Pattern(int startingMeasure,
-                 List<Player> players,
+                 List<PlayerOffset> players,
                  Object[] notes) {
     _startingMeasure = startingMeasure;
     _players = players;
@@ -19,7 +19,7 @@ public class Pattern {
     return _startingMeasure;
   }
 
-  public List<Player> getPlayers() {
+  public List<PlayerOffset> getPlayers() {
     return _players;
   }
   

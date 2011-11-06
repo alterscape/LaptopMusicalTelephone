@@ -1,4 +1,4 @@
-public class Player {
+public class PlayerOffset {
   public int _offsetMeasures;  // in measures
   public int _offsetSixteenths;
   public String _addr;

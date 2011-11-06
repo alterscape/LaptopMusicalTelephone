@@ -7,7 +7,7 @@
 
 public void assembleMessage(Measure measure) {
   Object[] notes = measure.getNotes(); 
-  List<Player> nextPlayers = measure.getPlayers();
+  List<PlayerOffset> nextPlayers = measure.getPlayers();
   
   OscMessage death = new OscMessage("/lorkas/ltm/death");
   death.add(aMeasure.length);
@@ -22,7 +22,7 @@ public void assembleMessage(Measure measure) {
   
   // how many players are coming? (for ease of parsing)
   death.add(nextPlayers.size());
-  for (Player p: nextPlayers) {
+  for (PlayerOffset p: nextPlayers) {
     death.add(p.getOffsetMeasures());
     death.add(p.getOffsetSixteenths());
     death.add(p.getAddress());

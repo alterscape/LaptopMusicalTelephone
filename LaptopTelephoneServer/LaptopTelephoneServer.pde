@@ -60,7 +60,7 @@ private void sendBeat() {
   _nextBeat += _wait_ms;
   OscMessage metro = new OscMessage(METRONOME_ADDR);
   metro.add(tempo);
-  metro.add(0);
+  metro.add(_measureNum);
   metro.add(_thisSubdiv);
   _metroMulticastOsc.send(metro);
   // is this the end of a measure?

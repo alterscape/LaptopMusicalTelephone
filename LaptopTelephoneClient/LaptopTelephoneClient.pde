@@ -24,12 +24,9 @@ import supercollider.*;
 import controlP5.*;
 
 /**
- * quantize +/- 1/32nd from the division to that bucket. -- DONE, and generalized (use NoteHappened)
- * Ryan will do keyboard input -- DONE
  * Report notes to NEXT PERSON IN LINE and SERVER
  * Capability to inject scores at different places in the line.
  * Capability to re-order players during performance.
- * n rows of First, second, third "chairs."
  * always inject score to first chair.
  * score always goes to second chair, then third chair, then to next first chair. 
  * Client needs to handshake with server (report chair). DONE
@@ -47,9 +44,10 @@ import controlP5.*;
  * Right/left.
  **/
 
-public static final int MEASURE_WIDTH = 975;  //px
-public static final int MEASURE_TOP = 150;
+public static final int MEASURE_WIDTH = 850;  //px
+public static final int MEASURE_TOP = 50;
 public static final int MEASURE_HEIGHT = 50;
+public static final int MAX_OFFSET = 16;
 
 public static final int STATE_PRE_HOLALA = 0;
 public static final int STATE_WAITING = 1;
@@ -74,7 +72,7 @@ private int[] score = new int[SUBDIVISIONS];
 // the score you actually played.
 private int[] _myScore = new int[SUBDIVISIONS];
 
-private int[] _theirScore = new int [SUBDIVISIONS];
+private int[][] _theirScore = new int [MAX_OFFSET][SUBDIVISIONS];
 // save the scores you actually played in past measures
 private List<int[]> _myScores = new ArrayList<int[]>();
 private int _tempo = 120;  // in bpm
@@ -95,6 +93,8 @@ private int _rowNum;
 private int _chairNum;
 
 private boolean _playing = true;
+private int _offset = 0;
+private int _measureNum;
 
 // declare early for speediness.
 private long _keypressTime;   
@@ -108,13 +108,12 @@ void setup() {
   
   // set up ControlP5 for UI
   controlP5 = new ControlP5(this);
-  chairBox = controlP5.addNumberbox("chair",_chairNum,50,200,100,14);
+  chairBox = controlP5.addNumberbox("chair",_chairNum,50,600,100,14);
   chairBox.setMultiplier(1);
-  rowBox = controlP5.addNumberbox("row",_rowNum,50,228,100,14);
+  rowBox = controlP5.addNumberbox("row",_rowNum,50,628,100,14);
   chairBox.setMultiplier(1);
-  commitButton = controlP5.addButton("commit",1,50,256,100,14);
+  commitButton = controlP5.addButton("commit",1,50,656,100,14);
   
-   
   oscP5 = new OscP5(this,6449);
   // handle the simple messages first.
   
@@ -173,29 +172,14 @@ void draw() {
   fill(0);
   color(0);
   text(statusMessage,300,300); 
- 
- 
+
   fill(128,128,128);
   stroke(255,255,255);
-  float measureLeft = (width-MEASURE_WIDTH)/2.0;
-  rect(measureLeft,MEASURE_TOP,MEASURE_WIDTH,MEASURE_HEIGHT);
+  float measureLeft = 75;
   
   int beatW = (MEASURE_WIDTH/SUBDIVISIONS);
-  
-  for (int i=0; i < SUBDIVISIONS; i++) {
-    float xPos = measureLeft + i*beatW;
-    line(xPos,MEASURE_TOP,xPos,MEASURE_TOP+MEASURE_HEIGHT);
-  }
-  
-  // draw score
-  for (int i=0; i<SUBDIVISIONS;i++) {
-    if (score[i] != 0) {
-      float beatX = measureLeft + i*beatW;
-      fill(0,255,0,128);
-      rect(beatX,MEASURE_TOP,beatW,MEASURE_HEIGHT);
-    }
-    
-  }
+
+  drawMeasure((int)measureLeft,MEASURE_TOP,MEASURE_WIDTH,MEASURE_HEIGHT,score,_beatNum);
   
   // draw the score as I've played it
   for (int i=0; i<SUBDIVISIONS; i++) {
@@ -215,6 +199,19 @@ void draw() {
   float subdivX = measureLeft + _subdivNum * beatW;
   fill(255,0,255,128);
   rect(subdivX,MEASURE_TOP,beatW,MEASURE_HEIGHT);
+  
+  //draw what's coming
+  fill(0);
+  noStroke();
+  text("Now",10,80);
+  drawMeasure((int)measureLeft,MEASURE_TOP+100,MEASURE_WIDTH,(int)(MEASURE_HEIGHT/1.5),score,_beatNum);
+  
+  fill(0);
+  noStroke();
+  text("Next",10,180);
+  drawMeasure((int)measureLeft,MEASURE_TOP+200,MEASURE_WIDTH,MEASURE_HEIGHT/2,score,_beatNum);
+  
+  drawMeasure((int)measureLeft,MEASURE_TOP+300,MEASURE_WIDTH,(int)(MEASURE_HEIGHT/2.5),score,_beatNum);
 }
 
 // detects keypresses. 
@@ -282,7 +279,6 @@ private int quantize(long deltaThisMeasure) {
     return whichSubdiv;
 }
 
-
 private void metro(int tempo, int tickCount, int beatNum) {
   _tempo = tempo;
   _beatNum = beatNum;
@@ -296,11 +292,11 @@ private void metro(int tempo, int tickCount, int beatNum) {
   }
 }
 
-
 // called by OscP5 when a note message comes in.
 private void note(int note) {
   println("got a note: " + note);
-  _theirScore[beatNum] == 1;
+  // FIXME this logic is dumb.
+  _theirScore[_measureNum+_offset][_beatNum] = 1;
 }
 
 // handles the complex score message, which I couldn't
@@ -365,6 +361,7 @@ public void commit(int code) {
   commitButton.hide();
   sayHolala();
 }
+// UI CODE ENDS HERE.
 
 public void chair(int chairNum) {
   _chairNum = chairNum;
@@ -376,3 +373,30 @@ public void row(int rowNum) {
   println("set row num: " + _rowNum);
 }
 
+/**
+ * Draws a measure (generalized fun function)
+ **/
+
+public void drawMeasure(int leftPx, int topPx, int widthPx, int heightPx, int[] measure, int currentIndex) {
+  
+  int beatW = widthPx / SUBDIVISIONS;
+  
+  fill(128,128,128);
+  stroke(255,255,255);
+  rect(leftPx,topPx,widthPx,heightPx);
+  
+  for (int i=0; i < SUBDIVISIONS; i++) {
+    float xPos = leftPx + i*beatW;
+    line(xPos,topPx,xPos,topPx+heightPx);
+  }
+  
+  // draw score
+  for (int i=0; i<SUBDIVISIONS;i++) {
+    if (score[i] != 0) {
+      float beatX = leftPx + i*beatW;
+      fill(0,255,0,128);
+      rect(beatX,topPx,beatW,heightPx);
+    }
+    
+  }
+}

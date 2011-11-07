@@ -20,11 +20,21 @@ class TelephoneTangoScore
     
     //Part II
     int[][] E1 = {dq, e, er, sr, s, s, s, s, s}; //Line E.1
+    int[] e1Chairs = { 0, 1, 2, 0, 1, 2, 0,  1,  2,  3,  0,  1,  2,  0, };
+    int[] e1Parts = { 0, 0, 0, 1, 1, 1, 2, 2,  2,  2,  0,  0,  0,  1, };
+    int[] e1Measure_offset = { 0, 2, 4, 6, 7, 8, 9, 10, 11, 12, 14, 15, 17, 18 };   
+    int[] e1Measure_offset16 = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };    
+    
+    //create first measure of Part II
     int E_1[] = createMeasure(E1); 
-    List<PlayerOffset> E_1_players = createPlayersForE_1(E_1);
+    List<PlayerOffset> E_1_players = createPlayers(e1Measure_offset16, e1Measure_offset, e1Chairs, e1Parts);
     Measure e1Measure  = new Measure(25, E_1_players, E_1, "Line E, Measure 1");         
     
+    //create 2nd by copying the travel info & changing start measure and actual notes played
     int[][] E_2 = {e, e, s, s, e, er, e, er, e}; //Line E.2
+    Measure e2Measure = e1Measure.copy("Line E, Measure 2"); 
+    e2Measure.incOneMeasure();
+    e2Measure.setNotes(createMeasure(E_2)); 
   
   }
   
@@ -41,13 +51,8 @@ class TelephoneTangoScore
   }
   
   
-  List<PlayerOffset> createPlayersForE_1(int[] measure)
-  {
-      int[] chairs = { 0, 1, 2, 0, 1, 2, 0,  1,  2,  3,  0,  1,  2,  0, };
-      int[] parts = { 0, 0, 0, 1, 1, 1, 2, 2,  2,  2,  0,  0,  0,  1, };
-      int[] measure_offset = { 0, 2, 4, 6, 7, 8, 9, 10, 11, 12, 14, 15, 17, 18 };   
-      int[] measure_offset16 = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; 
-      
+  List<PlayerOffset> createPlayers(int[] measure_offset16, int[] measure_offset, int[] chairs, int[] parts)
+  {   
       ArrayList<PlayerOffset> players = new ArrayList<PlayerOffset>(); 
       for( int i=0; i<chairs.length; i++)
       {

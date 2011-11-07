@@ -18,12 +18,15 @@ String debugOutput3 = "";
 
 TelephoneNetwork network;
 TelephoneSenderAssignment senderAssign; 
+TelephoneTangoScore score;
 
 private List<Pattern> _patterns = new ArrayList<Pattern>();
 
 void setup() {
   
   size(500,500);
+  score = new TelephoneTangoScore();
+  
   oscP5 = new OscP5(this,6450);
   // Setup Multicast Properties
   OscProperties multicastProps = new OscProperties();

@@ -207,7 +207,7 @@ class TelephoneSenderAssignment
   void reset()
   {
     network = new TelephoneNetwork();
-    waitingQueue.empty();
+    waitingQueue.clear();
   }
   
   void checkQueue(TelephoneChair chair)

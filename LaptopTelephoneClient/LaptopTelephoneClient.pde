@@ -68,12 +68,11 @@ private OscP5 _multicastOsc;
 //how bright is the background
 private int backgroundBrightness = 0;
 // the received score you're supposed to play
-private int[] score = new int[SUBDIVISIONS];  
+private int[][] score = new int[4][SUBDIVISIONS];  
 // the score you actually played.
 private int[] _myScore = new int[SUBDIVISIONS];
 
 // save the scores you actually played in past measures
-private List<int[]> _myScores = new ArrayList<int[]>();
 private int _tempo = 120;  // in bpm
 private int _beatNum = 0;
 private int _delay = 1;
@@ -83,6 +82,7 @@ private NetAddress _nextPlayerAddr;
 private NetAddress _serverAddr;
 
 private List<Measure> upcomingMeasures;
+private Measure thisMeasure;
 
 // UI stuff
 private ControlP5 controlP5;
@@ -118,7 +118,6 @@ void setup() {
   oscP5 = new OscP5(this,6449);
   // handle the simple messages first.
   
-  oscP5.plug(this,"note",NOTE_ADDR);
   oscP5.plug(this,"setNextNodeAddress",NEXT_NODE_ADDR);
   oscP5.plug(this, "waitingForNextIp", UR_WAITING_ADDR);
   
@@ -167,7 +166,6 @@ void draw() {
       // made this a variable, because I think we might want to change it such that
       // peoples' faces are more brightly lit when they're playing.
       background(backgroundBrightness);
-    
   }
   
   fill(0);
@@ -180,7 +178,7 @@ void draw() {
   
   int beatW = (MEASURE_WIDTH/SUBDIVISIONS);
 
-  drawMeasure((int)measureLeft,MEASURE_TOP,MEASURE_WIDTH,MEASURE_HEIGHT,score,_beatNum);
+  drawMeasure((int)measureLeft,MEASURE_TOP,MEASURE_WIDTH,MEASURE_HEIGHT,score[0],_beatNum);
   
   // draw the score as I've played it
   for (int i=0; i<SUBDIVISIONS; i++) {
@@ -193,26 +191,24 @@ void draw() {
   
   // highlight current beat.
   float beatX = measureLeft + _beatNum * beatW;
+  float subdivX = measureLeft + _subdivNum * beatW;
+  
   fill(255,0,0,128);
   rect(beatX,MEASURE_TOP,beatW,MEASURE_HEIGHT);
   
-  // highlight current beat.
-  float subdivX = measureLeft + _subdivNum * beatW;
   fill(255,0,255,128);
   rect(subdivX,MEASURE_TOP,beatW,MEASURE_HEIGHT);
   
   //draw what's coming
   fill(0);
-  noStroke();
   text("Now",10,80);
-  drawMeasure((int)measureLeft,MEASURE_TOP+100,MEASURE_WIDTH,(int)(MEASURE_HEIGHT/1.5),score,_beatNum);
+  text("Next",10,160);
   
-  fill(0);
-  noStroke();
-  text("Next",10,180);
-  drawMeasure((int)measureLeft,MEASURE_TOP+200,MEASURE_WIDTH,MEASURE_HEIGHT/2,score,_beatNum);
+  drawMeasure((int)measureLeft,MEASURE_TOP+100,MEASURE_WIDTH,(int)(MEASURE_HEIGHT/1.5),score[1],_beatNum);
   
-  drawMeasure((int)measureLeft,MEASURE_TOP+300,MEASURE_WIDTH,(int)(MEASURE_HEIGHT/2.5),score,_beatNum);
+  drawMeasure((int)measureLeft,MEASURE_TOP+200,MEASURE_WIDTH,(int)(MEASURE_HEIGHT/2),score[2],_beatNum);
+  
+  drawMeasure((int)measureLeft,MEASURE_TOP+300,MEASURE_WIDTH,(int)(MEASURE_HEIGHT/2.5),score[3],_beatNum);
 }
 
 // detects keypresses. 
@@ -228,9 +224,7 @@ public void keyPressed() {
 
 public void playNote()
 //play a note via Supercollider
-{
- // buffer.setn(0, width, samples);
-  
+{ 
   synth = new Synth("playPotsAndPans");
   synth.set("trig", 1);
   synth.set("whichPot", 2); //which sample to trigger... right now there are 4
@@ -245,28 +239,16 @@ public void keyReleased() {
 }
 
 private void noteHappened(long whenItHappened) {
-   long deltaThisMeasure = _nextSubdiv - whenItHappened;
-    // simple quantizing.
-    int whichSubdiv = quantize(deltaThisMeasure);
-    if (whichSubdiv > SUBDIVISIONS-1)
-      whichSubdiv = SUBDIVISIONS-1;
-    // record the note we just played
-    _myScore[whichSubdiv] = 1;
-    
-    if ( _nextPlayerAddr != null)
-    {
-      OscMessage noteMess = new OscMessage(NOTE_ADDR);
-      noteMess.add(1);
-      oscP5.send(noteMess,_nextPlayerAddr);
-    }
-    //TODO: notify the next player that a note was played.
-    playNote();
+  long deltaThisMeasure = _nextSubdiv - whenItHappened;
+  int whichSubdiv = quantize(deltaThisMeasure);  //simple quantizing
+  if (whichSubdiv > SUBDIVISIONS-1)
+    whichSubdiv = SUBDIVISIONS-1;
+  _myScore[whichSubdiv] = 1;  // record the note we just played
+  playNote(); // actually play it
 }
 
 
-private void noteEnded(long whenItHappened) {
-  
-}
+private void noteEnded(long whenItHappened) {}
 
 private int quantize(long deltaThisMeasure) {
   int whichSubdiv = 0;
@@ -280,24 +262,48 @@ private int quantize(long deltaThisMeasure) {
     return whichSubdiv;
 }
 
-private void metro(int tempo, int tickCount, int beatNum) {
+private void metro(int tempo, int measureNum, int beatNum) {
   _tempo = tempo;
   _beatNum = beatNum;
   _delay = (60*1000)/(_tempo*4);
   _nextSubdiv = millis() + _delay;
   _subdivNum = _beatNum;
+  _measureNum = measureNum;
   if (beatNum == 0) {  // on first beat of new measure
+    // check if we were playing something
+    if (thisMeasure != null && thisMeasure.getPlayers().size() > 2) {
+      // construct the new measure that we're gonna send out to the next person.
+      List<PlayerOffset> outgoingPlayers = new ArrayList<PlayerOffset>(thisMeasure.getPlayers());
+      outgoingPlayers.remove(0);  //remove ourselves
+      Measure outgoingMeasure = new Measure(_measureNum-1,
+                                            outgoingPlayers,
+                                            _myScore);
+      OscMessage outgoingMessage = assembleMessage(outgoingMeasure);
+      NetAddress outgoingAddr = new NetAddress(outgoingPlayers.get(0).getAddress(),OSC_PORT);
+      oscP5.send(outgoingMessage,outgoingAddr);
+    }
+  
+    // clean up
     _myScore = new int[SUBDIVISIONS];
-    _myScores.add(_myScore);
-    // send back to server.
+    
+    // iterate over all upcoming measures.
+    // remember: preroll is min(4,offset);
+    for(Measure m : upcomingMeasures) {
+      int startingMeasure = m.getStartingMeasure()+m.getPlayers().get(0).getOffsetMeasures();
+      // if it falls outside of the area we can draw or play, ignore it.
+      if ((startingMeasure < _measureNum) || (startingMeasure > _measureNum + 4 )) {
+        continue;
+      }
+      // ok, so where is it?
+      int drawOffset = startingMeasure-_measureNum;
+      assert(drawOffset < 4 && drawOffset >=0);
+      score[drawOffset] = m.getNotes();
+      // if it's now, then update things!
+      if (drawOffset == 0) {
+        thisMeasure = m;
+      }
+    }    
   }
-}
-
-// called by OscP5 when a note message comes in.
-private void note(int note) {
-  println("got a note: " + note);
-  // FIXME this logic is dumb.
-  //_theirScore[_measureNum+_offset][_beatNum] = 1;
 }
 
 // handles the complex score message, which I couldn't
@@ -305,15 +311,9 @@ private void note(int note) {
 // length of the message.
 void oscEvent(OscMessage message) {
   if (message.checkAddrPattern(SCORE_ADDR) == true) {
-    _offset = message.get(0).intValue();
-    int _scoreTTL = message.get(1).intValue();
-    int numMeasures = message.get(2).intValue();
-    // update the score for this node
-    for(int j=0;j<numMeasures;j++) {
-      for (int i=0;i<SUBDIVISIONS;i++) {
-        //score[j][i] = message.get(i+3).intValue();
-      }
-    }
+    Measure receivedMeasure = disassembleMessage(message);
+    upcomingMeasures.add(receivedMeasure);
+    
   }
 }
 
@@ -337,24 +337,14 @@ void sayHolala() {
  **/
 
 void setNextClientAddress(String nextIp, String serverIp) {
-  println("next client address is: " + nextIp);
-  println("server address is: " + serverIp);
   currentState = STATE_READY;
   _nextPlayerAddr = new NetAddress(nextIp,OSC_PORT);
   _serverAddr = new NetAddress(serverIp,OSC_PORT);
   
 }
 
-// help supercollider clean up its dirty laundry.
-//void exit() {
-//  super.exit();
-//}
-
-void waitingForNextIp()
-{
+void waitingForNextIp() {
   currentState = STATE_WAITING;
-  //give some UI message here
-  println("Waiting for next IP!");
 }
 
 // UI CODE STARTS HERE
@@ -371,12 +361,10 @@ public void commit(int code) {
 
 public void chair(int chairNum) {
   _chairNum = chairNum;
-  println("set chair num: " + _chairNum);
 }
 
 public void row(int rowNum) {
   _rowNum = rowNum;
-  println("set row num: " + _rowNum);
 }
 
 /**
@@ -398,7 +386,7 @@ public void drawMeasure(int leftPx, int topPx, int widthPx, int heightPx, int[] 
   
   // draw score
   for (int i=0; i<SUBDIVISIONS;i++) {
-    if (score[i] != 0) {
+    if (measure[i] != 0) {
       float beatX = leftPx + i*beatW;
       fill(0,255,0,128);
       rect(beatX,topPx,beatW,heightPx);

@@ -1,7 +1,3 @@
-/**
- * 
- **/
-
 public class Measure {
   private int _startingMeasure;
   private List<PlayerOffset> _players;

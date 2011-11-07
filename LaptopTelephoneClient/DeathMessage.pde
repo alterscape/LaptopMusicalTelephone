@@ -26,6 +26,8 @@ public void assembleMessage(Measure measure) {
     death.add(p.getOffsetMeasures());
     death.add(p.getOffsetSixteenths());
     death.add(p.getAddress());
+    death.add(p.getChair());
+    death.add(p.getPart());
   }
 }
 
@@ -43,10 +45,14 @@ public void disassembleMessage(OscMessage death) {
   int numPlayers = death.get(1+numSubdivs).intValue();
   
   for (int i=0;i<numPlayers;i++) {
-    int offsetM = death.get(2+numSubdivs+(i*3)).intValue();
-    int offsetS = death.get(2+numSubdivs+(i*3+1)).intValue();
-    String addr = death.get(2+numSubdivs+(i*3+2)).stringValue();
-    PlayerOffset newPlyr = new PlayerOffset(offsetM,offsetS,addr);
+    int offsetM = death.get(2+numSubdivs+(i*5)).intValue();
+    int offsetS = death.get(2+numSubdivs+(i*5+1)).intValue();
+    String addr = death.get(2+numSubdivs+(i*5+2)).stringValue();
+    int chair = death.get(2+numSubdivs+(i*5+3)).intValue();
+    int part = death.get(2+numSubdivs+(i*5+4)).intValue();
+
+    
+    PlayerOffset newPlyr = new PlayerOffset(offsetM,offsetS,addr, chair, part);
     thesePlayers.add(newPlyr);    
   }
 }

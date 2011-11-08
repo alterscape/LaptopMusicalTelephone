@@ -58,11 +58,18 @@ public void draw() {
  //noFill();
  //noStroke();
  background(0);
+ fill(255);
  text(network.toString(), 15, 15);
  
  text("Measure: " + _measureNum +"\nBeat : " + _thisSubdiv, 15, 150);
  
  text(_status,15, 200);
+ 
+ List<TelephoneChair> chairsStillWaiting = senderAssign.chairsStillWaitingOn();
+ fill(255,0,0);
+ for (int i=0;i<chairsStillWaiting.size();i++) {
+   text("still waiting on " + chairsStillWaiting.get(i) + ".", 15, 250+i*20);
+ }
 
 }
 

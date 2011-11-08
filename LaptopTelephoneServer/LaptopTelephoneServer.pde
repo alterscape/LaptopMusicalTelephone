@@ -10,10 +10,13 @@ private int _wait_ms = 60000/tempo;
 private long _nextBeat = 0;
 private int _measureNum = 0;
 private int _thisSubdiv = 0;
+private boolean _running = false;
 
 String debugOutput = "";
 String debugOutput2 = "";
 String debugOutput3 = "";
+
+String _status;
 
 
 TelephoneNetwork network;
@@ -26,6 +29,8 @@ void setup() {
   
   size(500,500);
   score = new TelephoneTangoScore();
+  
+  _status = "Waiting for players to connect. Press spacebar to start.";
   
   oscP5 = new OscP5(this,6450);
   // Setup Multicast Properties
@@ -47,11 +52,24 @@ void setup() {
 }
 
 public void draw() {
- if (millis() > _nextBeat) {
+ if ((millis() > _nextBeat) && _running) {
    sendBeat();
  }
+ //noFill();
+ //noStroke();
+ background(0);
  text(network.toString(), 15, 15);
+ 
+ text("Measure: " + _measureNum +"\nBeat : " + _thisSubdiv, 15, 150);
+ 
+ text(_status,15, 200);
 
+}
+
+private void startTelephoneTango() {
+  _nextBeat = millis();
+  _running = true;
+  _status = "Playing...";
 }
 
 
@@ -70,16 +88,27 @@ private void sendBeat() {
   if ( (_thisSubdiv+=4) >= SUBDIVISIONS) {
     _thisSubdiv = 0;
     _measureNum++;
-    // iterate over every pattern we have in the score.
-    for (Pattern p : _patterns) {
-      // if any of them start on the measure we're about to start, send 'em out!
-      if (p.getStartingMeasure() == _measureNum) {
-        // FIXME: look up the IP for the starting chair
-        NetAddress startingChair = new NetAddress("127.0.0.1",OSC_PORT);
-        // send it out.
-        sendScore(p.getMeasures()[0],startingChair);
+    // check all the measures we're waiting to start
+    for (Measure m : score.getMeasures()) {
+      // check if it starts now.
+      if (m.getStartingMeasure() == _measureNum) {
+        // get our first player (the person the server has to send it to)
+        PlayerOffset p = m.getPlayers().get(0);
+        NetAddress playerAddress = new NetAddress(p.getAddress(),OSC_PORT);
+        OscMessage deathMessage = assembleMessage(m);
+        oscP5.send(deathMessage,playerAddress);
       }
     }
+    // iterate over every pattern we have in the score.
+//    for (Pattern p : _patterns) {
+//      // if any of them start on the measure we're about to start, send 'em out!
+//      if (p.getStartingMeasure() == _measureNum) {
+//        // FIXME: look up the IP for the starting chair
+//        NetAddress startingChair = new NetAddress("127.0.0.1",OSC_PORT);
+//        // send it out.
+//        sendScore(p.getMeasures()[0],startingChair);
+//      }
+//    }
   }
 }
 
@@ -97,4 +126,10 @@ public void assignLaptops(String ip, int part, int chair)
 {
   println("laptops assigned!");
   senderAssign.holala(ip, part, chair);
+}
+
+public void keyPressed() {
+  if (key == ' ') {
+    startTelephoneTango();
+  }
 }

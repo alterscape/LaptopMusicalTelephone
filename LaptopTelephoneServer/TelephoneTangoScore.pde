@@ -13,7 +13,7 @@ class TelephoneTangoScore
   private final int[] s =  {1};
   private final int[] sr = {0};
   private final int[] t332 = {1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0};
-
+  
   public TelephoneTangoScore()
   {
     measures = new ArrayList<Measure>(); 
@@ -23,6 +23,7 @@ class TelephoneTangoScore
     int E_1[] = createMeasure(E1); 
     List<PlayerOffset> E_1_players = createPlayersForE_1(E_1);
     Measure e1Measure  = new Measure(25, E_1_players, E_1, "Line E, Measure 1");         
+    measures.add(e1Measure);
     
     int[][] E_2 = {e, e, s, s, e, er, e, er, e}; //Line E.2
   
@@ -67,7 +68,11 @@ class TelephoneTangoScore
        mm_size = mm[i].length;
     }
     return mm_size;   
+  }*/
+  
+  public List<Measure> getMeasures() {
+    return measures;
   }
-*/
+
 }
 

@@ -30,7 +30,7 @@ class TelephoneChair
 //------------------------------------------------------------------------------------------------------------
 class TelephoneNetwork
 {
-  ArrayList parts; //holds array of chairs for each part
+  ArrayList<TelephoneChair[]> parts; //holds array of chairs for each part
   int partSize = 3;
   boolean isInit = false; 
   int partsInit = 0;

@@ -29,6 +29,10 @@ class TelephoneChair
   int getPart(){ return part; }
   int getChair(){ return chair; }
   boolean hasIP(){ return _ipAssigned;}
+  
+  public String toString() {
+    return "Row " + part + ", chair " + chair;
+  }
 }
 
 //------------------------------------------------------------------------------------------------------------

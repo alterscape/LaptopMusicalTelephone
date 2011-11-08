@@ -152,12 +152,12 @@ class TelephoneNetwork
 class TelephoneSenderAssignment
 {
   TelephoneNetwork network = null;
-  ArrayList waitingQueue; 
+  ArrayList<TelephoneChair> waitingQueue; 
   
   TelephoneSenderAssignment(TelephoneNetwork net)
   {
     network = net; 
-    waitingQueue = new ArrayList();
+    waitingQueue = new ArrayList<TelephoneChair>();
   }
   
   void holala(String ip, int chairNum, int part)

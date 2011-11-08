@@ -131,6 +131,8 @@ void setup() {
   _multicastOsc = new OscP5(this,multicastProps);
   _multicastOsc.plug(this,"metro",METRONOME_ADDR);
   
+  upcomingMeasures = new ArrayList<Measure>();
+  
   //okay now load shit so there's not that first delay!! (in Supercollider code)
   Server.init(); 
 }
@@ -277,7 +279,7 @@ private void metro(int tempo, int measureNum, int beatNum) {
       outgoingPlayers.remove(0);  //remove ourselves
       Measure outgoingMeasure = new Measure(_measureNum-1,
                                             outgoingPlayers,
-                                            _myScore);
+                                            _myScore, "foo");
       OscMessage outgoingMessage = assembleMessage(outgoingMeasure);
       NetAddress outgoingAddr = new NetAddress(outgoingPlayers.get(0).getAddress(),OSC_PORT);
       oscP5.send(outgoingMessage,outgoingAddr);
@@ -313,8 +315,8 @@ void oscEvent(OscMessage message) {
   if (message.checkAddrPattern(SCORE_ADDR) == true) {
     Measure receivedMeasure = disassembleMessage(message);
     upcomingMeasures.add(receivedMeasure);
-    
   }
+  println(message);
 }
 
 /**

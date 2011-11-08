@@ -56,5 +56,5 @@ public Measure disassembleMessage(OscMessage death) {
     PlayerOffset newPlyr = new PlayerOffset(offsetM,offsetS,addr, chair, part);
     thesePlayers.add(newPlyr);    
   }
-  return new Measure(_measureNum,thesePlayers,thisMeasureNotes);
+  return new Measure(_measureNum,thesePlayers,thisMeasureNotes,"foo");
 }

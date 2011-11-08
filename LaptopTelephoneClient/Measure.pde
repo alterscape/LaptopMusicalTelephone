@@ -1,3 +1,7 @@
+/**
+ * 
+ **/
+
 public class Measure {
   private int _startingMeasure;
   private List<PlayerOffset> _players;
@@ -24,4 +28,27 @@ public class Measure {
   public int[] getNotes() {
     return _notes;
   }
+  
+  public void incOneMeasure() //increment one measure
+  {
+    _startingMeasure += 1;
+  }
+  
+  public void setNotes(int[] notes)
+  {
+    _notes = notes;  
+  }
+  
+  public Measure copy(String newMotiveName)
+  {
+    ArrayList<PlayerOffset> newPlayers = new ArrayList(); 
+    for(int i=0; i<_players.size(); i++)
+    {
+      newPlayers.add( ( (PlayerOffset)_players.get(i) ).copy());
+    }
+    
+    Measure newMeasure = new Measure(_startingMeasure, newPlayers, _notes, newMotiveName);
+    return newMeasure; 
+  }
+  
 }

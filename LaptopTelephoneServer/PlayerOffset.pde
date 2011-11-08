@@ -34,4 +34,10 @@ public class PlayerOffset {
   {
     return _part;
   }
+  
+  public PlayerOffset copy()
+  {
+    PlayerOffset player = new PlayerOffset(_offsetMeasures, _offsetSixteenths, _addr, _chair, _part);
+    return player; 
+  }
 }

@@ -97,18 +97,9 @@ private void sendBeat() {
         NetAddress playerAddress = new NetAddress(p.getAddress(),OSC_PORT);
         OscMessage deathMessage = assembleMessage(m);
         oscP5.send(deathMessage,playerAddress);
+        println("Sending " + deathMessage);
       }
     }
-    // iterate over every pattern we have in the score.
-//    for (Pattern p : _patterns) {
-//      // if any of them start on the measure we're about to start, send 'em out!
-//      if (p.getStartingMeasure() == _measureNum) {
-//        // FIXME: look up the IP for the starting chair
-//        NetAddress startingChair = new NetAddress("127.0.0.1",OSC_PORT);
-//        // send it out.
-//        sendScore(p.getMeasures()[0],startingChair);
-//      }
-//    }
   }
 }
 

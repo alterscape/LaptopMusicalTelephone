@@ -2,6 +2,7 @@ class TelephoneChair
 {
   String ip = "";
   TelephoneChair nextChair = null; 
+  boolean _ipAssigned; 
   
   //actually it is good id these here, too
   int part; int chair;
@@ -10,6 +11,7 @@ class TelephoneChair
   {
     part = p;
     chair = c; 
+    _ipAssigned = false;
   }
   
   String getIP(){ return ip; }
@@ -18,6 +20,7 @@ class TelephoneChair
   void setIP(String ipNum)
   {
     ip = ipNum; 
+    _ipAssigned = true;
   }
   void setNextChair(TelephoneChair chair)
   {
@@ -25,6 +28,7 @@ class TelephoneChair
   }
   int getPart(){ return part; }
   int getChair(){ return chair; }
+  boolean hasIP(){ return _ipAssigned;}
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -52,6 +56,14 @@ class TelephoneNetwork
     defaultPath();
     
   }
+  
+  int getPartSize(){ return parts.size(); }
+  int getChairSize(int index)
+  {
+    assert( index < getPartSize() );
+    
+    return ( (TelephoneChair[]) parts.get(index) ).length; 
+  } 
   
   void createPart(int partIndex, int chairNum)
   //create a part with a particular 
@@ -223,6 +235,19 @@ class TelephoneSenderAssignment
       index++;
      }
      if (found){ sendChairNextIP(waitingChair); }
+  }
+
+  List<TelephoneChair> chairsStillWaitingOn()
+  {
+    ArrayList<TelephoneChair> chairs = new ArrayList<TelephoneChair>();
+    for(int i=0; i<network.getPartSize(); i++)
+      for(int j=0; j<network.getChairSize(i); j++)
+      {
+        TelephoneChair chair = network.getNode(i, j); 
+        if (!chair.hasIP()) chairs.add(chair);
+      }
+      
+      return chairs; 
   }
 
 }

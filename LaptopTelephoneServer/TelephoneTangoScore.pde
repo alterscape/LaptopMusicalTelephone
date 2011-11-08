@@ -17,7 +17,16 @@ class TelephoneTangoScore
   public TelephoneTangoScore()
   {
     measures = new ArrayList<Measure>(); 
+    createPartII();
+  }
+     
+  private void createPartIII()
+  {
     
+  }
+     
+  private void createPartII()
+  { 
     //Part II
     int[][] E1 = {dq, e, er, sr, s, s, s, s, s}; //Line E.1
     int[] e1Chairs = { 0, 1, 2, 0, 1, 2, 0,  1,  2,  3,  0,  1,  2,  0, };
@@ -31,13 +40,63 @@ class TelephoneTangoScore
     Measure e1Measure  = new Measure(25, E_1_players, E_1, "Line E, Measure 1");         
     measures.add(e1Measure);
     
+    //this starts to go into unorthodox network connections so that we can have different people playing all at once, etc.  
+    //starting measure: 41
+    int[] e1Chairs_1 = { 2, 0, 1 };
+    int[] e1Parts_1  = { 0, 1, 1 };
+    int[] e1Measure_offset_1 = { 0, 1, 5 };
+    int[] e1Measure_offset16_1 = { 0, 2, 0 };
+    List<PlayerOffset> E_1_players_1 = createPlayers(e1Measure_offset16_1, e1Measure_offset_1, e1Chairs_1, e1Parts_1);
+    Measure e1Measure_1  = new Measure(41, E_1_players_1, E_1, "Line E, Measure 1 Round Pt. 1");         
+    measures.add(e1Measure_1);
+    
+
+
+    //starting measure: 41
+    int[] e1Chairs_2 = { 1, 2, 2, 1, 1 };
+    int[] e1Parts_2  = { 1, 1, 2, 1, 0 };
+    int[] e1Measure_offset_2 = { 0, 0, 0, 0, 2 };
+    int[] e1Measure_offset16_2 = { 0, 1, 2, 4, 6 };
+    List<PlayerOffset> E_1_players_2 = createPlayers(e1Measure_offset16_2, e1Measure_offset_2, e1Chairs_2, e1Parts_2);
+    Measure e1Measure_2  = new Measure(41, E_1_players_2, E_1, "Line E, Measure 1 Round Pt. 2");         
+    measures.add(e1Measure_2);
+    
+
+    //starting measure: 43
+    int[] e1Chairs_3 = { 1, 2, 1 };
+    int[] e1Parts_3  = { 2, 2, 0 };
+    int[] e1Measure_offset_3 = { 0, 3, 4 };
+    int[] e1Measure_offset16_3 = { 8, 0, 0 };
+    List<PlayerOffset> E_1_players_3 = createPlayers(e1Measure_offset16_3, e1Measure_offset_3, e1Chairs_3, e1Parts_3);
+    Measure e1Measure_3  = new Measure(43, E_1_players_3, E_1, "Line E, Measure 1 Round Pt. 3");         
+    measures.add(e1Measure_3);    
+    
     //create 2nd by copying the travel info & changing start measure and actual notes played
     int[][] E_2 = {e, e, s, s, e, er, e, er, e}; //Line E.2
+    int[] E2 = createMeasure(E_2);
+    
     Measure e2Measure = e1Measure.copy("Line E, Measure 2"); 
     e2Measure.incOneMeasure();
-    e2Measure.setNotes(createMeasure(E_2)); 
+    e2Measure.setNotes(E2); 
+    measures.add(e2Measure);    
+
   
+    Measure e2Measure_1 = e1Measure_1.copy("Line E, Measure 2 Round Pt. 1"); 
+    e2Measure_1.incOneMeasure();
+    e2Measure_1.setNotes(E2); 
+    measures.add(e2Measure_1);    
+    
+    Measure e2Measure_2 = e1Measure_2.copy("Line E, Measure 2 Round Pt. 2"); 
+    e2Measure_2.incOneMeasure();
+    e2Measure_2.setNotes(E2); 
+    measures.add(e2Measure_2);       
+    
+    Measure e2Measure_3 = e1Measure_3.copy("Line E, Measure 2 Round Pt. 2"); 
+    e2Measure_3.incOneMeasure();
+    e2Measure_3.setNotes(E2); 
+    measures.add(e2Measure_3);    
   }
+
   
   private int[] createMeasure(int[][] mm)
   {

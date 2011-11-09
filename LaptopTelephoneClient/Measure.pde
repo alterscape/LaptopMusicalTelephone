@@ -1,7 +1,3 @@
-/**
- * 
- **/
-
 public class Measure {
   private int _startingMeasure;
   private List<PlayerOffset> _players;
@@ -41,14 +37,20 @@ public class Measure {
   
   public Measure copy(String newMotiveName)
   {
-    ArrayList<PlayerOffset> newPlayers = new ArrayList(); 
+    ArrayList<PlayerOffset> newPlayers = new ArrayList<PlayerOffset>(); 
     for(int i=0; i<_players.size(); i++)
     {
-      newPlayers.add( ( (PlayerOffset)_players.get(i) ).copy());
+      newPlayers.add( _players.get(i).copy());
     }
     
     Measure newMeasure = new Measure(_startingMeasure, newPlayers, _notes, newMotiveName);
     return newMeasure; 
+  }
+  
+  String toString()
+  {
+    String mine =  "_startingMeasure " + _startingMeasure + "   _players: " + _players + "  _notes: " + Arrays.toString(_notes) + "  newMotiveName: " + _motiveName;
+    return mine;
   }
   
 }

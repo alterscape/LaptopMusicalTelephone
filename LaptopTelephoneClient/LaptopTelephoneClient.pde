@@ -289,6 +289,7 @@ private void metro(int tempo, int measureNum, int beatNum) {
                                             _myScore, "foo");
       OscMessage outgoingMessage = assembleMessage(outgoingMeasure);
       NetAddress outgoingAddr = new NetAddress(outgoingPlayers.get(0).getAddress(),OSC_PORT);
+println( "right before it crashes WE HOPE:" + outgoingPlayers.get(0).getAddress() );      
       oscP5.send(outgoingMessage,outgoingAddr);
       _playing = false;
     }

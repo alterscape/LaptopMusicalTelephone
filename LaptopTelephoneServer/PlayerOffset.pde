@@ -40,4 +40,10 @@ public class PlayerOffset {
     PlayerOffset player = new PlayerOffset(_offsetMeasures, _offsetSixteenths, _addr, _chair, _part);
     return player; 
   }
+  
+  String toString()
+  {
+       return "_offsetMeasures: " + _offsetMeasures + "  _offsetSixteenths:" + _offsetSixteenths + "  _addr: " + _addr + "  _chair" + _chair + "  _part:" + _part;
+  }
+  
 }

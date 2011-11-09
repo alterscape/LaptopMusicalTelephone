@@ -46,4 +46,11 @@ public class Measure {
     Measure newMeasure = new Measure(_startingMeasure, newPlayers, _notes, newMotiveName);
     return newMeasure; 
   }
+  
+  String toString()
+  {
+    String mine =  "_startingMeasure " + _startingMeasure + "   _players: " + _players + "  _notes: " + Arrays.toString(_notes) + "  newMotiveName: " + _motiveName;
+    return mine;
+  }
+  
 }

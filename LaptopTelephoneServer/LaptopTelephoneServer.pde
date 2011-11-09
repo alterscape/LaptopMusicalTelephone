@@ -8,7 +8,7 @@ private int tempo = 120;
 
 private int _wait_ms = 60000/tempo;
 private long _nextBeat = 0;
-private int _measureNum = 0;
+private int _measureNum = -5;
 private int _thisSubdiv = 0;
 private boolean _running = false;
 
@@ -76,6 +76,7 @@ public void draw() {
 
 private void startTelephoneTango() {
   score = new TelephoneTangoScore(); 
+  score.createPartIITest();
   _nextBeat = millis();
   _running = true;
   _status = "Playing...";
@@ -100,9 +101,10 @@ private void sendBeat() {
     // check all the measures we're waiting to start
     for (Measure m : score.getMeasures()) {
       // check if it starts now.
-      if (m.getStartingMeasure() == _measureNum) {
+      if (m.getStartingMeasure() == _measureNum-4) {
         // get our first player (the person the server has to send it to)
         PlayerOffset p = m.getPlayers().get(0);
+        println("About to send m:" +m);
         NetAddress playerAddress = new NetAddress(p.getAddress(),OSC_PORT);
         OscMessage deathMessage = assembleMessage(m);
         oscP5.send(deathMessage,playerAddress);

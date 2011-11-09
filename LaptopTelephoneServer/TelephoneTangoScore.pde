@@ -116,7 +116,8 @@ class TelephoneTangoScore
       ArrayList<PlayerOffset> players = new ArrayList<PlayerOffset>(); 
       for( int i=0; i<chairs.length; i++)
       {
-        PlayerOffset info = new PlayerOffset(measure_offset16[i], measure_offset[i], "", chairs[i], parts[i]); 
+        TelephoneChair chair = network.getNode(chairs[i],parts[i]);
+        PlayerOffset info = new PlayerOffset(measure_offset16[i], measure_offset[i], chair.getIP(), chairs[i], parts[i]); 
         players.add(info); 
       }
       return players;

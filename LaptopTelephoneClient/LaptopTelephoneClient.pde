@@ -67,6 +67,7 @@ private OscP5 _multicastOsc;
 
 //how bright is the background
 private int backgroundBrightness = 0;
+private color backgroundColor;
 // the received score you're supposed to play
 private int[][] score = new int[4][SUBDIVISIONS];  
 // the score you actually played.
@@ -93,7 +94,7 @@ private Button commitButton;
 private int _rowNum;
 private int _chairNum;
 
-private boolean _playing = true;
+private boolean _playing = false;
 private int _offset = 0;
 private int _measureNum;
 
@@ -147,70 +148,77 @@ void draw() {
   }
   
   String statusMessage = "You are Chair " + _chairNum + " in row " + _rowNum + ".";
-  
+  background(backgroundColor);
   switch(currentState) {
     case STATE_PRE_HOLALA:
-      background(255,255,0);
+      backgroundColor = color(255,255,0);
+      //background(255,255,0);
       statusMessage = "You are NOT connected. Get your chair and row number from the conductor and then commit!";
       break;
     case STATE_WAITING:
-      background(255,255,100);
+      backgroundColor = color(255,255,100);
       statusMessage = "You are now waiting for the server to tell you who to talk to! You are Chair " + _chairNum + " in row " + _rowNum + ".";
       break;
     case STATE_COMMUNICATING:
-      background(255,255,100);
+      backgroundColor = color(255,255,100);
       statusMessage = "Waiting for the server to acknowledge you said something.";
       break;
     case STATE_ERROR:
-      background(255,0,0);
+      backgroundColor = color(255,0,0);
       break;
     default:
       // made this a variable, because I think we might want to change it such that
       // peoples' faces are more brightly lit when they're playing.
-      background(backgroundBrightness);
-  }
-  
-  fill(0);
-  color(0);
-  text(statusMessage,300,300); 
+      if (_playing) {
+        backgroundColor = color(255);
+      } else {
+        backgroundBrightness = color(0);
+      }
+        
+      
+      
+      float measureLeft = 75;
+      int beatW = (MEASURE_WIDTH/SUBDIVISIONS);
 
-  fill(128,128,128);
-  stroke(255,255,255);
-  float measureLeft = 75;
-  
-  int beatW = (MEASURE_WIDTH/SUBDIVISIONS);
-
-  drawMeasure((int)measureLeft,MEASURE_TOP,MEASURE_WIDTH,MEASURE_HEIGHT,score[0],_beatNum);
-  
-  // draw the score as I've played it
-  for (int i=0; i<SUBDIVISIONS; i++) {
-    if (_myScore[i] != 0) {
-      float beatX = measureLeft + i*beatW;
-      fill(0,255,0,128);
+      drawMeasure((int)measureLeft,MEASURE_TOP,MEASURE_WIDTH,MEASURE_HEIGHT,score[0],_beatNum);
+      
+      // draw the score as I've played it
+      for (int i=0; i<SUBDIVISIONS; i++) {
+        if (_myScore[i] != 0) {
+          float beatX = measureLeft + i*beatW;
+          fill(0,255,0,128);
+          rect(beatX,MEASURE_TOP,beatW,MEASURE_HEIGHT);
+        }
+      }
+      
+      // highlight current beat.
+      float beatX = measureLeft + _beatNum * beatW;
+      float subdivX = measureLeft + _subdivNum * beatW;
+      
+      fill(255,0,0,128);
       rect(beatX,MEASURE_TOP,beatW,MEASURE_HEIGHT);
-    }
+      
+      fill(255,0,255,128);
+      rect(subdivX,MEASURE_TOP,beatW,MEASURE_HEIGHT);
+      
+      //draw what's coming
+      fill(0);
+      text("Now",10,80);
+      text("Next",10,160);
+      
+      drawMeasure((int)measureLeft,MEASURE_TOP+100,MEASURE_WIDTH,(int)(MEASURE_HEIGHT/1.5),score[1],_beatNum);
+      
+      drawMeasure((int)measureLeft,MEASURE_TOP+200,MEASURE_WIDTH,(int)(MEASURE_HEIGHT/2),score[2],_beatNum);
+      
+      drawMeasure((int)measureLeft,MEASURE_TOP+300,MEASURE_WIDTH,(int)(MEASURE_HEIGHT/2.5),score[3],_beatNum);
   }
   
-  // highlight current beat.
-  float beatX = measureLeft + _beatNum * beatW;
-  float subdivX = measureLeft + _subdivNum * beatW;
-  
-  fill(255,0,0,128);
-  rect(beatX,MEASURE_TOP,beatW,MEASURE_HEIGHT);
-  
-  fill(255,0,255,128);
-  rect(subdivX,MEASURE_TOP,beatW,MEASURE_HEIGHT);
-  
-  //draw what's coming
   fill(0);
-  text("Now",10,80);
-  text("Next",10,160);
-  
-  drawMeasure((int)measureLeft,MEASURE_TOP+100,MEASURE_WIDTH,(int)(MEASURE_HEIGHT/1.5),score[1],_beatNum);
-  
-  drawMeasure((int)measureLeft,MEASURE_TOP+200,MEASURE_WIDTH,(int)(MEASURE_HEIGHT/2),score[2],_beatNum);
-  
-  drawMeasure((int)measureLeft,MEASURE_TOP+300,MEASURE_WIDTH,(int)(MEASURE_HEIGHT/2.5),score[3],_beatNum);
+  if(backgroundColor != color(0,0,0))
+    fill(0);
+  else
+    fill(255);
+  text(statusMessage,300,300); 
 }
 
 // detects keypresses. 
@@ -283,6 +291,7 @@ private void metro(int tempo, int measureNum, int beatNum) {
       OscMessage outgoingMessage = assembleMessage(outgoingMeasure);
       NetAddress outgoingAddr = new NetAddress(outgoingPlayers.get(0).getAddress(),OSC_PORT);
       oscP5.send(outgoingMessage,outgoingAddr);
+      _playing = false;
     }
   
     // clean up
@@ -303,6 +312,7 @@ private void metro(int tempo, int measureNum, int beatNum) {
       // if it's now, then update things!
       if (drawOffset == 0) {
         thisMeasure = m;
+        _playing = true;
       }
     }    
   }
@@ -346,7 +356,9 @@ void setNextClientAddress(String nextIp, String serverIp) {
 }
 
 void waitingForNextIp() {
-  currentState = STATE_WAITING;
+  // we're not actually using this, so I'm just hacking around it for now - RS
+  //currentState = STATE_WAITING;
+  currentState = STATE_READY;
 }
 
 // UI CODE STARTS HERE

@@ -121,6 +121,7 @@ void setup() {
   
   oscP5.plug(this,"setNextNodeAddress",NEXT_NODE_ADDR);
   oscP5.plug(this, "waitingForNextIp", UR_WAITING_ADDR);
+  oscP5.plug(this, "errorReceived",ERROR_ADDR);
   
   // the multicast listener handles metronome events
   OscProperties multicastProps = new OscProperties();
@@ -174,8 +175,6 @@ void draw() {
       } else {
         backgroundBrightness = color(0);
       }
-        
-      
       
       float measureLeft = 75;
       int beatW = (MEASURE_WIDTH/SUBDIVISIONS);
@@ -408,5 +407,8 @@ public void drawMeasure(int leftPx, int topPx, int widthPx, int heightPx, int[] 
   }
 }
 
+public void errorReceived(String theError) {
+  currentState = STATE_ERROR;
+}
 
 

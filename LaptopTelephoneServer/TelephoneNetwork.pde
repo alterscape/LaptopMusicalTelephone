@@ -180,6 +180,10 @@ class TelephoneSenderAssignment
   {
     //set the ip address of the node
     TelephoneChair chair = network.getNode(part, chairNum); 
+    if (chair.getIp() != null) {
+      sendErrorMessage(ip);
+      return;
+    }
     chair.setIP(ip); 
     
     //check if someone is waiting on this node & if so send them that ip
@@ -217,6 +221,12 @@ class TelephoneSenderAssignment
      NetAddress laptop_location = new NetAddress(chair.getIP(),OSC_PORT);
 
      oscP5.send(msg, laptop_location);  
+  }
+  
+  void sendChairError(String ip) {
+    OscMessage msg = new OscMessage(ERROR_ADDR);
+    msg.add("Someone already requested this part/chair! Try again!");
+    oscP5.send(msg,new NetAddress(ip,OSC_PORT); 
   }
   
   //destroy everything and do it again

@@ -5,4 +5,5 @@ public static final String NEXT_NODE_ADDR = "/lorkas/ltm/next_node";
 public static final String HOLALA_ADDR = "/lorkas/ltm/holala";
 public static final String UR_WAITING_ADDR = "/lorkas/ltm/ur_waitin";
 public static final String MEASURE_ADDR = "/lorkas/ltm/death";
+public static final String ERROR_ADDR = "/lorkas/ltm/danger_will_robinson";
 public static final int SUBDIVISIONS = 16;

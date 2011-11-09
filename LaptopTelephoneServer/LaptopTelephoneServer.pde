@@ -28,7 +28,7 @@ private List<Pattern> _patterns = new ArrayList<Pattern>();
 void setup() {
   
   size(500,500);
-  score = new TelephoneTangoScore();
+  
   
   _status = "Waiting for players to connect. Press spacebar to start.";
   
@@ -46,8 +46,8 @@ void setup() {
              
  //init my telephone networks!
  network = new TelephoneNetwork(); 
- senderAssign = new TelephoneSenderAssignment(network); 
-
+ senderAssign = new TelephoneSenderAssignment(network);
+ // score has to come after network, because score depends on network.
 
 }
 
@@ -74,6 +74,7 @@ public void draw() {
 }
 
 private void startTelephoneTango() {
+  score = new TelephoneTangoScore(); 
   _nextBeat = millis();
   _running = true;
   _status = "Playing...";

@@ -221,8 +221,6 @@ void draw() {
 }
 
 // detects keypresses. 
-
-
 public void keyPressed() {
   _keypressTime = millis();
   if (key == ' ') {  // player trying to play.
@@ -327,7 +325,6 @@ println("other stuff: "+ m.getPlayers().get(0).getOffsetMeasures());
 // length of the message.
 void oscEvent(OscMessage message) {
   println(message);
-  
   if (message.checkAddrPattern(MEASURE_ADDR) == true) {
     Measure receivedMeasure = disassembleMessage(message);
     upcomingMeasures.add(receivedMeasure);

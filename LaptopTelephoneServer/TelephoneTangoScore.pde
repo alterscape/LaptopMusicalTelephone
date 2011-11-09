@@ -40,20 +40,20 @@ class TelephoneTangoScore
   
   public void createPartIITest()
   {
-      int[][] E1 = {dq, e, er, sr, s, s, s, s, s}; //Line E.1
-      int[][] E2 = {e, e, s, s, e, er, e, er, e}; //Line E.2
-      
-      int[] e1Measure_offset = { 0, 2, 4, 6, 7, 8, 9, 10, 11, 12, 14, 15, 17, 18 };   
-      int[] e1Measure_offset16 = { 0, 0, 0, 0, 0, 2, 0, 4, 0, 0, 8, 0, 0, 0 };
-      int[] e1Parts = new int[e1Measure_offset16.length];
-      int[] e1Chairs = new int[e1Measure_offset16.length];
-      
-      for(int i=0; i < e1Measure_offset.length; i++)
-      {
-         int partIndex = i % network.getPartSize();
-         e1Parts[i] = partIndex;
-         e1Chairs[i] = i % network.getChairSize(partIndex);
-      }
+    int[][] E1 = {dq, e, er, sr, s, s, s, s, s}; //Line E.1
+    int[][] E2 = {e, e, s, s, e, er, e, er, e}; //Line E.2
+    
+    int[] e1Measure_offset = { 0, 2, 4, 6, 7, 8, 9, 10, 11, 12, 14, 15, 17, 18 };   
+    int[] e1Measure_offset16 = { 0, 0, 0, 0, 0, 2, 0, 4, 0, 0, 8, 0, 0, 0 };
+    int[] e1Parts = new int[e1Measure_offset16.length];
+    int[] e1Chairs = new int[e1Measure_offset16.length];
+    
+    for(int i=0; i < e1Measure_offset.length; i++)
+    {
+       int partIndex = i % network.getPartSize();
+       e1Parts[i] = partIndex;
+       e1Chairs[i] = i % network.getChairSize(partIndex);
+    }
     
     int E_1[] = createMeasure(E1); 
     List<PlayerOffset> E_1_players = createPlayers(e1Measure_offset16, e1Measure_offset, e1Chairs, e1Parts);
@@ -93,8 +93,6 @@ class TelephoneTangoScore
     Measure e1Measure_1  = new Measure(41, E_1_players_1, E_1, "Line E, Measure 1 Round Pt. 1");         
     measures.add(e1Measure_1);
     
-
-
     //starting measure: 41
     int[] e1Chairs_2 = { 1, 2, 2, 1, 1 };
     int[] e1Parts_2  = { 1, 1, 2, 1, 0 };
@@ -102,8 +100,7 @@ class TelephoneTangoScore
     int[] e1Measure_offset16_2 = { 0, 1, 2, 4, 6 };
     List<PlayerOffset> E_1_players_2 = createPlayers(e1Measure_offset16_2, e1Measure_offset_2, e1Chairs_2, e1Parts_2);
     Measure e1Measure_2  = new Measure(41, E_1_players_2, E_1, "Line E, Measure 1 Round Pt. 2");         
-    measures.add(e1Measure_2);
-    
+    measures.add(e1Measure_2);    
 
     //starting measure: 43
     int[] e1Chairs_3 = { 1, 2, 1 };

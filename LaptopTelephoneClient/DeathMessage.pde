@@ -54,7 +54,6 @@ public Measure disassembleMessage(OscMessage death) {
     String addr = death.get(2+numSubdivs+(i*5+2)).stringValue();
     int chair = death.get(2+numSubdivs+(i*5+3)).intValue();
     int part = death.get(2+numSubdivs+(i*5+4)).intValue();
-
     
     PlayerOffset newPlyr = new PlayerOffset(offsetM,offsetS,addr, chair, part);
     thesePlayers.add(newPlyr);    

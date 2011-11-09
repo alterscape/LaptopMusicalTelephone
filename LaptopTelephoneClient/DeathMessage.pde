@@ -60,7 +60,7 @@ public Measure disassembleMessage(OscMessage death) {
     thesePlayers.add(newPlyr);    
   }
   
-  int measureNum = death.get(2+numSubdivs+numPlayers*5).intValue();
+  int measureNum = death.get(1+numSubdivs+numPlayers*5).intValue();
   
   return new Measure(measureNum,thesePlayers,thisMeasureNotes,"foo");
 }

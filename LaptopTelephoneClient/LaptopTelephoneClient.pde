@@ -325,6 +325,8 @@ println("other stuff: "+ m.getPlayers().get(0).getOffsetMeasures());
 // find a good way to handle through Plug, due to the arbitrary
 // length of the message.
 void oscEvent(OscMessage message) {
+  println(message);
+  
   if (message.checkAddrPattern(MEASURE_ADDR) == true) {
     Measure receivedMeasure = disassembleMessage(message);
     upcomingMeasures.add(receivedMeasure);

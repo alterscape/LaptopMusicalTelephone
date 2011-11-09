@@ -106,6 +106,7 @@ private void sendBeat() {
         PlayerOffset p = m.getPlayers().get(0);
         println("About to send m:" +m);
         NetAddress playerAddress = new NetAddress(p.getAddress(),OSC_PORT);
+        println("playerAdddress: " + playerAddress);
         OscMessage deathMessage = assembleMessage(m);
         oscP5.send(deathMessage,playerAddress);
         println("Sending " + deathMessage);

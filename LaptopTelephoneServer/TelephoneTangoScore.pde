@@ -3,16 +3,16 @@ class TelephoneTangoScore
   ArrayList<Measure> measures;
   
   //note durations for easy transcription
-  private final int[] h = {1,0,0,0,0,0,0};
-  private final int[] q = {1,0,0,0};
-  private final int[] e = {1,0};
-  private final int[] hr = {0,0,0,0,0,0,0,0};
-  private final int[] dq = {1,0,0,0,0,0};
-  private final int[] de = {1,0,0};
-  private final int[] qr = {0,0,0,0};
-  private final int[] er = {0,0};  
-  private final int[] s =  {1};
-  private final int[] sr = {0};
+  private final int[] h =    {1,0,0,0,0,0,0};
+  private final int[] q =    {1,0,0,0};
+  private final int[] e =    {1,0};
+  private final int[] hr =   {0,0,0,0,0,0,0,0};
+  private final int[] dq =   {1,0,0,0,0,0};
+  private final int[] de =   {1,0,0};
+  private final int[] qr =   {0,0,0,0};
+  private final int[] er =   {0,0};  
+  private final int[] s =    {1};
+  private final int[] sr =   {0};
   private final int[] t332 = {1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0};
   
   public TelephoneTangoScore()
@@ -20,23 +20,36 @@ class TelephoneTangoScore
     measures = new ArrayList<Measure>(); 
   }
      
-  private void createPartIII()
+  public void createPartIII(int startMeasure)
   {
     
     //Part III
     int[][] F1 = { de, de, de, s, s, s, e, sr, s }; //Line F
     int[][] F2 = { er, de, de, er, e, sr, s, e }; //Line F
+    int F_1[] = createMeasure(F1); 
+    int F_2[] = createMeasure(F2); 
+    
     
     final int motiveRepeat = 5; 
-    
-    for(int i=0; i<motiveRepeat; i++)
-    {
-      
-    
-    }
+    ArrayList<PlayerOffset> playerMeasures = new ArrayList<PlayerOffset>();
     
 
+    //create first player array & player
+    for( int i=0; i<motiveRepeat; i++ )
+      for( int partIndex=0; partIndex<network.getPartSize(); partIndex++ )
+        for( int chairIndex=0; chairIndex<network.getChairSize(partIndex); chairIndex++ )
+        {
+            TelephoneChair chair = network.getNode(partIndex, chairIndex);
+            playerMeasures.add( new PlayerOffset(i*2, 0, chair.getIP() , chairIndex, partIndex) );       
+        }
+    Measure measure1 =  new Measure(startMeasure, playerMeasures, F_1, "Line F, Measure 1");  
+    Measure measure2 = measure1.copy("Line F, Measure 2"); 
+    measure2.incOneMeasure();
+    measure2.setNotes(F_2); 
+    measures.add(measure2);        
   }
+  
+  
   
   public void createPartIITest()
   {

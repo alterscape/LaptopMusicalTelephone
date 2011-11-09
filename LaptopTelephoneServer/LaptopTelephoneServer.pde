@@ -101,7 +101,7 @@ private void sendBeat() {
     // check all the measures we're waiting to start
     for (Measure m : score.getMeasures()) {
       // check if it starts now.
-      if (m.getStartingMeasure() == _measureNum-4) {
+      if (m.getStartingMeasure() == (_measureNum+4)) {
         // get our first player (the person the server has to send it to)
         PlayerOffset p = m.getPlayers().get(0);
         println("About to send m:" +m);

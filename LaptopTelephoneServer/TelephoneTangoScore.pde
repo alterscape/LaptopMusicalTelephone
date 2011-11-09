@@ -8,6 +8,7 @@ class TelephoneTangoScore
   private final int[] e = {1,0};
   private final int[] hr = {0,0,0,0,0,0,0,0};
   private final int[] dq = {1,0,0,0,0,0};
+  private final int[] de = {1,0,0};
   private final int[] qr = {0,0,0,0};
   private final int[] er = {0,0};  
   private final int[] s =  {1};
@@ -17,15 +18,58 @@ class TelephoneTangoScore
   public TelephoneTangoScore()
   {
     measures = new ArrayList<Measure>(); 
-    createPartII();
   }
      
   private void createPartIII()
   {
     
+    //Part III
+    int[][] F1 = { de, de, de, s, s, s, e, sr, s }; //Line F
+    int[][] F2 = { er, de, de, er, e, sr, s, e }; //Line F
+    
+    final int motiveRepeat = 5; 
+    
+    for(int i=0; i<motiveRepeat; i++)
+    {
+      
+    
+    }
+    
+
   }
+  
+  public void createPartIITest()
+  {
+      int[][] E1 = {dq, e, er, sr, s, s, s, s, s}; //Line E.1
+      int[][] E2 = {e, e, s, s, e, er, e, er, e}; //Line E.2
+      
+      int[] e1Measure_offset = { 0, 2, 4, 6, 7, 8, 9, 10, 11, 12, 14, 15, 17, 18 };   
+      int[] e1Measure_offset16 = { 0, 0, 0, 0, 0, 2, 0, 4, 0, 0, 8, 0, 0, 0 };
+      int[] e1Parts = new int[e1Measure_offset16.length];
+      int[] e1Chairs = new int[e1Measure_offset16.length];
+      
+      for(int i=0; i < e1Measure_offset.length; i++)
+      {
+         int partIndex = i % network.getPartSize();
+         e1Parts[i] = partIndex;
+         e1Chairs[i] = i % network.getChairSize(partIndex);
+      }
+    
+    int E_1[] = createMeasure(E1); 
+    List<PlayerOffset> E_1_players = createPlayers(e1Measure_offset16, e1Measure_offset, e1Chairs, e1Parts);
+    Measure e1Measure  = new Measure(0, E_1_players, E_1, "Line E, Measure 1");         
+    measures.add(e1Measure);    
+    
+    int E_2[] = createMeasure(E2); 
+    Measure e2Measure = e1Measure.copy("Line E, Measure 2"); 
+    e2Measure.incOneMeasure();
+    e2Measure.setNotes(E_2); 
+    measures.add(e2Measure);        
+    
+  }
+  
      
-  private void createPartII()
+  public void createPartII()
   { 
     //Part II
     int[][] E1 = {dq, e, er, sr, s, s, s, s, s}; //Line E.1

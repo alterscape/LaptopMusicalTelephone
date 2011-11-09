@@ -67,7 +67,6 @@ class TelephoneTangoScore
     measures.add(e2Measure);        
     
   }
-  
      
   public void createPartII()
   { 

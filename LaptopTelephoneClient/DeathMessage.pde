@@ -29,6 +29,9 @@ public OscMessage assembleMessage(Measure measure) {
     death.add(p.getChair());
     death.add(p.getPart());
   }
+  
+  death.add(measure.getStartingMeasure());
+  
   return death;
 }
 
@@ -56,5 +59,8 @@ public Measure disassembleMessage(OscMessage death) {
     PlayerOffset newPlyr = new PlayerOffset(offsetM,offsetS,addr, chair, part);
     thesePlayers.add(newPlyr);    
   }
-  return new Measure(_measureNum,thesePlayers,thisMeasureNotes,"foo");
+  
+  int measureNum = def.get(2+numSubdivs+5*numPlayers+1);
+  
+  return new Measure(measureNum,thesePlayers,thisMeasureNotes,"foo");
 }

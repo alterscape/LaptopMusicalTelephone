@@ -32,7 +32,7 @@ void setup() {
   
   _status = "Waiting for players to connect. Press spacebar to start.";
   
-  oscP5 = new OscP5(this,6450, OscProperties.TCP);
+  oscP5 = new OscP5(this,6450);
   // Setup Multicast Properties
   OscProperties multicastProps = new OscProperties();
   multicastProps.setNetworkProtocol(OscP5.MULTICAST);

@@ -116,7 +116,7 @@ void setup() {
   chairBox.setMultiplier(1);
   commitButton = controlP5.addButton("commit",1,50,656,100,14);
   
-  oscP5 = new OscP5(this,6449, OscProperties.TCP);
+  oscP5 = new OscP5(this,6449);
   // handle the simple messages first.
   
   oscP5.plug(this,"setNextNodeAddress",NEXT_NODE_ADDR);
@@ -301,6 +301,10 @@ private void metro(int tempo, int measureNum, int beatNum) {
     for(Measure m : upcomingMeasures) {
       int startingMeasure = m.getStartingMeasure()+m.getPlayers().get(0).getOffsetMeasures();
       // if it falls outside of the area we can draw or play, ignore it.
+      
+print("start" + startingMeasure+"\t");
+println("other stuff: "+ m.getPlayers().get(0).getOffsetMeasures());
+      
       if ((startingMeasure < _measureNum) || (startingMeasure > _measureNum + 4 )) {
         continue;
       }
@@ -321,9 +325,10 @@ private void metro(int tempo, int measureNum, int beatNum) {
 // find a good way to handle through Plug, due to the arbitrary
 // length of the message.
 void oscEvent(OscMessage message) {
-  if (message.checkAddrPattern(SCORE_ADDR) == true) {
+  if (message.checkAddrPattern(MEASURE_ADDR) == true) {
     Measure receivedMeasure = disassembleMessage(message);
     upcomingMeasures.add(receivedMeasure);
+    println(receivedMeasure);
   }
   println(message);
 }
@@ -339,7 +344,7 @@ void sayHolala() {
   holalaMsg.add(_rowNum);
   holalaMsg.add(_chairNum);  
   _multicastOsc.send(holalaMsg);
-  currentState = STATE_COMMUNICATING;
+  currentState = STATE_READY;
 }
 
 /**

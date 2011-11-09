@@ -61,6 +61,14 @@ class TelephoneNetwork
     
   }
   
+  void testWithTwo()
+  {
+    parts = new ArrayList(1);
+    partSize = 1; 
+    createPart(0, 2);
+    isInit = true; //that's RIGHT I am circumventing my own safegaurds...!!!!!!!! 
+  }
+  
   int getPartSize(){ return parts.size(); }
   int getChairSize(int index)
   {
@@ -176,16 +184,17 @@ class TelephoneSenderAssignment
     waitingQueue = new ArrayList<TelephoneChair>();
   }
   
-  void holala(String ip, int chairNum, int part)
+  void holala(String ip, int part, int chairNum)
   {
     //set the ip address of the node
     TelephoneChair chair = network.getNode(part, chairNum); 
-    if (chair.getIp() != null) {
-      sendErrorMessage(ip);
+    if (chair.hasIP()) {
+      sendChairError(ip);
       return;
     }
     chair.setIP(ip); 
     
+/*    
     //check if someone is waiting on this node & if so send them that ip
     checkQueue(chair);
     
@@ -200,7 +209,9 @@ class TelephoneSenderAssignment
     {
       sendChairNextIP(chair); 
     }
-  
+  */
+   //we're ALIVE!!!!!!!
+   sendChairWaitingMessage(chair);
   }
   
   void sendChairNextIP(TelephoneChair chair)

@@ -32,7 +32,7 @@ void setup() {
   
   _status = "Waiting for players to connect. Press spacebar to start.";
   
-  oscP5 = new OscP5(this,6450);
+  oscP5 = new OscP5(this,6450, OscProperties.TCP);
   // Setup Multicast Properties
   OscProperties multicastProps = new OscProperties();
   multicastProps.setNetworkProtocol(OscP5.MULTICAST);
@@ -46,6 +46,7 @@ void setup() {
              
  //init my telephone networks!
  network = new TelephoneNetwork(); 
+ network.testWithTwo();
  senderAssign = new TelephoneSenderAssignment(network);
  // score has to come after network, because score depends on network.
 
@@ -59,7 +60,7 @@ public void draw() {
  //noStroke();
  background(0);
  fill(255);
- text(network.toString(), 15, 15);
+ //text(network.toString(), 15, 15);
  
  text("Measure: " + _measureNum +"\nBeat : " + _thisSubdiv, 15, 150);
  

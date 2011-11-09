@@ -116,7 +116,7 @@ void setup() {
   chairBox.setMultiplier(1);
   commitButton = controlP5.addButton("commit",1,50,656,100,14);
   
-  oscP5 = new OscP5(this,6449);
+  oscP5 = new OscP5(this,6449, OscProperties.TCP);
   // handle the simple messages first.
   
   oscP5.plug(this,"setNextNodeAddress",NEXT_NODE_ADDR);
@@ -336,8 +336,8 @@ void sayHolala() {
   println("Saying holala!");
   OscMessage holalaMsg = new OscMessage(HOLALA_ADDR);
   holalaMsg.add(NetInfo.lan());
-  holalaMsg.add(0);
-  holalaMsg.add(0);
+  holalaMsg.add(_rowNum);
+  holalaMsg.add(_chairNum);  
   _multicastOsc.send(holalaMsg);
   currentState = STATE_COMMUNICATING;
 }

@@ -308,16 +308,20 @@ println( "CLIENT: right before it crashes WE HOPE:" + outgoingPlayers.get(0).get
       int startingMeasure = m.getStartingMeasure()+m.getPlayers().get(0).getOffsetMeasures();
       // if it falls outside of the area we can draw or play, ignore it.
       
-print("CLIENT: start" + startingMeasure+"\t");
-println("CLIENT: other stuff: "+ m.getPlayers().get(0).getOffsetMeasures());
+      print("CLIENT: start" + startingMeasure+"\t");
+      println(" other stuff: "+ m.getPlayers().get(0).getOffsetMeasures());
       
-      if ((startingMeasure < _measureNum) || (startingMeasure > _measureNum + 4 )) {
+      if ((startingMeasure < _measureNum) || (startingMeasure > _measureNum + 3 )) {
         continue;
       }
       // ok, so where is it?
+      
       int drawOffset = startingMeasure-_measureNum;
+      println("CLIENT: drawOffset is " + drawOffset);
       assert(drawOffset < 4 && drawOffset >=0);
+      println("CLIENT: ASSERTS PASSED");
       System.arraycopy( m.getNotes(),0,score[drawOffset],0,SUBDIVISIONS);
+      println("CLIENT: ARRAYCOPY WORKED");
       // if it's now, then update things!
       if (drawOffset == 0) {
         thisMeasure = m;

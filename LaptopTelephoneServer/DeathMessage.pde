@@ -47,7 +47,7 @@ public Measure disassembleMessage(OscMessage death) {
   for (int i=0;i<numSubdivs;i++) {
     thisMeasureNotes[i] = death.get(i+2).intValue();
   }
-  int numPlayers = death.get(1+numSubdivs).intValue();
+  int numPlayers = death.get(2+numSubdivs).intValue();
   
   for (int i=0;i<numPlayers;i++) {
     int offsetM = death.get(3+numSubdivs+(i*5)).intValue();

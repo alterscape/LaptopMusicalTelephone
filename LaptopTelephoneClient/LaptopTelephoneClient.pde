@@ -287,10 +287,13 @@ println("CLIENT: before creating list of players");
 println("CLIENT: after creating list of players, we have " + outgoingPlayers.size() + " players.");
       outgoingPlayers.remove(0);  //remove ourselves
 println("CLIENT: we've removed the first player.");
+      int[] scoreToSend = new int[SUBDIVISIONS];
+      System.arraycopy(_myScore,0,scoreToSend,0,SUBDIVISIONS);
       Measure outgoingMeasure = new Measure(thisMeasure.getStartingMeasure(),
                                             outgoingPlayers,
-                                            _myScore, "foo");
-println("CLIENT: we've constructed the outgoing measure"); 
+                                            scoreToSend, "foo");
+println("CLIENT: we've constructed the outgoing measure");
+println("CLIENT: outgoing measure is " + outgoingMeasure);
       OscMessage outgoingMessage = assembleMessage(outgoingMeasure);
 println("CLIENT: we've constructed the outgoing message");
       NetAddress outgoingAddr = new NetAddress(outgoingPlayers.get(0).getAddress(),OSC_PORT);
@@ -312,7 +315,7 @@ println( "CLIENT: right before it crashes WE HOPE:" + outgoingPlayers.get(0).get
     // remember: preroll is min(4,offset);
 println("CLIENT: iterating over "+ upcomingMeasures.size() +" upcoming measures.");
     for(Measure m : upcomingMeasures) {
-println("CLIENT: " + m.getPlayers().get(0).getIP() + " (this should be my IP)");
+println("CLIENT: " + m.getPlayers().get(0).getAddress() + " (this should be my IP)");
       int startingMeasure = m.getStartingMeasure()+m.getPlayers().get(0).getOffsetMeasures();
       // if it falls outside of the area we can draw or play, ignore it.
       

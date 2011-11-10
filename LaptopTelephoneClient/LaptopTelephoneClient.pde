@@ -279,6 +279,7 @@ private void metro(int tempo, int measureNum, int beatNum) {
   _subdivNum = _beatNum;
   _measureNum = measureNum;
   if (beatNum == 0) {  // on first beat of new measure
+println("CLIENT: FIRST BEAT OF NEW MEASURE "+ _measureNum + "\t FIRST BEAT OF NEW MEASURE MEASURE NUM IS " + _measureNum);;
     // check if we were playing something
     if (thisMeasure != null && thisMeasure.getPlayers().size() > 2) {
       // construct the new measure that we're gonna send out to the next person.
@@ -314,33 +315,40 @@ println( "CLIENT: right before it crashes WE HOPE:" + outgoingPlayers.get(0).get
     // iterate over all upcoming measures.
     // remember: preroll is min(4,offset);
 println("CLIENT: iterating over "+ upcomingMeasures.size() +" upcoming measures.");
-    for(Measure m : upcomingMeasures) {
-println("CLIENT: " + m.getPlayers().get(0).getAddress() + " (this should be my IP)");
-      int startingMeasure = m.getStartingMeasure()+m.getPlayers().get(0).getOffsetMeasures();
-      // if it falls outside of the area we can draw or play, ignore it.
       
-print("CLIENT: starting measure: " + m.getStartingMeasure() + "\t");
-print(" calculated start" + startingMeasure+"\t");
-println(" the first player's offset: "+ m.getPlayers().get(0).getOffsetMeasures());
-      
-      if ((startingMeasure < _measureNum) || (startingMeasure > _measureNum + 3 )) {
-        continue;
-      }
-      // ok, so where is it?
-      
-      int drawOffset = startingMeasure-_measureNum;
-      println("CLIENT: drawOffset is " + drawOffset);
-      assert(drawOffset < 4 && drawOffset >=0);
-      println("CLIENT: ASSERTS PASSED");
-      System.arraycopy( m.getNotes(),0,score[drawOffset],0,SUBDIVISIONS);
-      println("CLIENT: ARRAYCOPY WORKED");
-      // if it's now, then update things!
-      if (drawOffset == 0) {
-        thisMeasure = m;
-        _playing = true;
-      }
-    }    
   }
+  // do this all the time.
+  getUpcomingMeasuresAndPutThemHappyPlaces();
+  
+}
+
+void getUpcomingMeasuresAndPutThemHappyPlaces() {
+  for(Measure m : upcomingMeasures) {
+    println("CLIENT: " + m.getPlayers().get(0).getAddress() + " (this should be my IP)");
+    int startingMeasure = m.getStartingMeasure()+m.getPlayers().get(0).getOffsetMeasures();
+    // if it falls outside of the area we can draw or play, ignore it.
+    
+    print("CLIENT: starting measure: " + m.getStartingMeasure() + "\t");
+    print(" calculated start" + startingMeasure +"\t");
+    println(" the first player's offset: "+ m.getPlayers().get(0).getOffsetMeasures());
+    
+    if ((startingMeasure < _measureNum) || (startingMeasure > _measureNum + 3 )) {
+      continue;
+    }
+    // ok, so where is it?
+    
+    int drawOffset = startingMeasure-_measureNum;
+    println("CLIENT: drawOffset is " + drawOffset);
+    assert(drawOffset < 4 && drawOffset >=0);
+    println("CLIENT: ASSERTS PASSED");
+    System.arraycopy( m.getNotes(),0,score[drawOffset],0,SUBDIVISIONS);
+    println("CLIENT: ARRAYCOPY WORKED");
+    // if it's now, then update things!
+    if (drawOffset == 0) {
+      thisMeasure = m;
+      _playing = true;
+    }
+  }  
 }
 
 // handles the complex score message, which I couldn't

@@ -299,6 +299,8 @@ println( "CLIENT: right before it crashes WE HOPE:" + outgoingPlayers.get(0).get
     for (int i =0; i< 4; i++) {
       System.arraycopy(EMPTY_MEASURE,0,score[i],0,16);
     }
+    thisMeasure = null;
+    _playing = false;
     
     // iterate over all upcoming measures.
     // remember: preroll is min(4,offset);

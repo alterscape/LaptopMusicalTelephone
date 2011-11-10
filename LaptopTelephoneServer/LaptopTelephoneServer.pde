@@ -4,7 +4,7 @@ import netP5.*;
 private OscP5 oscP5;
 private OscP5 _metroMulticastOsc;
 private NetAddress remoteLocation;
-private int tempo = 120;
+private int tempo = 100;
 
 private int _wait_ms = 60000/tempo;
 private long _nextBeat = 0;
@@ -98,18 +98,20 @@ private void sendBeat() {
   if ( (_thisSubdiv+=4) >= SUBDIVISIONS) {
     _thisSubdiv = 0;
     _measureNum++;
+    System.out.printf("SERVER: measurenum: %d, # of measures in this score: %d\n", _measureNum, score.getMeasures().size() );
     // check all the measures we're waiting to start
     for (Measure m : score.getMeasures()) {
+      println("checking a measure with starting measure: " + m.getStartingMeasure());
       // check if it starts now.
       if (m.getStartingMeasure() == (_measureNum+4)) {
         // get our first player (the person the server has to send it to)
         PlayerOffset p = m.getPlayers().get(0);
-        println("SERVER: About to send m:" +m);
+        println("\tSERVER: About to send m:" +m);
         NetAddress playerAddress = new NetAddress(p.getAddress(),OSC_PORT);
-        println("SERVER: playerAdddress: " + playerAddress);
+        println("\tSERVER: playerAdddress: " + playerAddress);
         OscMessage deathMessage = assembleMessage(m);
         oscP5.send(deathMessage,playerAddress);
-        println("SERVER: Sending " + deathMessage);
+        println("\tSERVER: Sending " + deathMessage);
       }
     }
   }

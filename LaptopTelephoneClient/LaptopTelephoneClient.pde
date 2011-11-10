@@ -283,24 +283,25 @@ println("CLIENT: FIRST BEAT OF NEW MEASURE "+ _measureNum + "\t FIRST BEAT OF NE
     // check if we were playing something
     if (thisMeasure != null && thisMeasure.getPlayers().size() > 2) {
       // construct the new measure that we're gonna send out to the next person.
-println("CLIENT: before creating list of players");
+//println("CLIENT: before creating list of players");
       List<PlayerOffset> outgoingPlayers = new ArrayList<PlayerOffset>(thisMeasure.getPlayers());
-println("CLIENT: after creating list of players, we have " + outgoingPlayers.size() + " players.");
+//println("CLIENT: after creating list of players, we have " + outgoingPlayers.size() + " players.");
       outgoingPlayers.remove(0);  //remove ourselves
-println("CLIENT: we've removed the first player.");
+//println("CLIENT: we've removed the first player.");
 println("CLIENT: myScore is: " + Arrays.toString(_myScore));
+
       int[] scoreToSend = new int[SUBDIVISIONS];
       System.arraycopy(_myScore,0,scoreToSend,0,SUBDIVISIONS);
       println("CLIENT: scoreToSend is " + Arrays.toString(scoreToSend));
       Measure outgoingMeasure = new Measure(thisMeasure.getStartingMeasure(),
                                             outgoingPlayers,
                                             scoreToSend, "foo");
-println("CLIENT: we've constructed the outgoing measure");
+//println("CLIENT: we've constructed the outgoing measure");
 println("CLIENT: outgoing measure is " + outgoingMeasure);
       OscMessage outgoingMessage = assembleMessage(outgoingMeasure);
-println("CLIENT: we've constructed the outgoing message");
+//println("CLIENT: we've constructed the outgoing message");
       NetAddress outgoingAddr = new NetAddress(outgoingPlayers.get(0).getAddress(),OSC_PORT);
-println( "CLIENT: right before it crashes WE HOPE:" + outgoingPlayers.get(0).getAddress() );      
+//println( "CLIENT: right before it crashes WE HOPE:" + outgoingPlayers.get(0).getAddress() );      
       oscP5.send(outgoingMessage,outgoingAddr);
       _playing = false;
       upcomingMeasures.remove(thisMeasure);
@@ -313,9 +314,7 @@ println( "CLIENT: right before it crashes WE HOPE:" + outgoingPlayers.get(0).get
     }
     thisMeasure = null;
     _playing = false;
-    
-
-      
+          
   }
   // do this all the time.
   getUpcomingMeasuresAndPutThemHappyPlaces();
@@ -343,9 +342,9 @@ void getUpcomingMeasuresAndPutThemHappyPlaces() {
     int drawOffset = startingMeasure-_measureNum;
     println("CLIENT: drawOffset is " + drawOffset);
     assert(drawOffset < 4 && drawOffset >=0);
-    println("CLIENT: ASSERTS PASSED");
+    //println("CLIENT: ASSERTS PASSED");
     System.arraycopy( m.getNotes(),0,score[drawOffset],0,SUBDIVISIONS);
-    println("CLIENT: ARRAYCOPY WORKED");
+    //println("CLIENT: ARRAYCOPY WORKED");
     // if it's now, then update things!
     if (drawOffset == 0) {
       thisMeasure = m;
@@ -360,13 +359,13 @@ void getUpcomingMeasuresAndPutThemHappyPlaces() {
 void oscEvent(OscMessage message) {
 println("CLIENT received message (before forwarding on):" + message);
   if (message.checkAddrPattern(MEASURE_ADDR) == true) {
-println("CLIENT received a MEASURE_ADDR; about to forward");
+//println("CLIENT received a MEASURE_ADDR; about to forward");
     Measure receivedMeasure = disassembleMessage(message);
 println("CLIENT: decoded received measure: " + receivedMeasure);
     upcomingMeasures.add(receivedMeasure);
-println("CLIENT: Added to upcomingMeasures");
+//println("CLIENT: Added to upcomingMeasures");
   }
-  println("CLIENT AFTER SORTING OUT MESSAGE: " + message);
+  //println("CLIENT AFTER SORTING OUT MESSAGE: " + message);
 }
 
 /**

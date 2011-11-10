@@ -57,6 +57,8 @@ public static final int STATE_COMMUNICATING = 4;
 
 public int currentState = STATE_PRE_HOLALA;
 
+private static final int[] EMPTY_MEASURE = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
 // end configuration
 
 //osc receiver
@@ -294,6 +296,9 @@ println( "CLIENT: right before it crashes WE HOPE:" + outgoingPlayers.get(0).get
   
     // clean up
     _myScore = new int[SUBDIVISIONS];
+    for (int i =0; i< 4; i++) {
+      System.arraycopy(EMPTY_MEASURE,0,score[i],0,16);
+    }
     
     // iterate over all upcoming measures.
     // remember: preroll is min(4,offset);
@@ -310,7 +315,7 @@ println("CLIENT: other stuff: "+ m.getPlayers().get(0).getOffsetMeasures());
       // ok, so where is it?
       int drawOffset = startingMeasure-_measureNum;
       assert(drawOffset < 4 && drawOffset >=0);
-      score[drawOffset] = m.getNotes();
+      System.arraycopy( m.getNotes(),0,score[drawOffset],0,SUBDIVISIONS);
       // if it's now, then update things!
       if (drawOffset == 0) {
         thisMeasure = m;

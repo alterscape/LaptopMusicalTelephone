@@ -288,8 +288,10 @@ println("CLIENT: before creating list of players");
 println("CLIENT: after creating list of players, we have " + outgoingPlayers.size() + " players.");
       outgoingPlayers.remove(0);  //remove ourselves
 println("CLIENT: we've removed the first player.");
+println("CLIENT: myScore is: " + Arrays.toString(_myScore));
       int[] scoreToSend = new int[SUBDIVISIONS];
       System.arraycopy(_myScore,0,scoreToSend,0,SUBDIVISIONS);
+      println("CLIENT: scoreToSend is " + Arrays.toString(scoreToSend));
       Measure outgoingMeasure = new Measure(thisMeasure.getStartingMeasure(),
                                             outgoingPlayers,
                                             scoreToSend, "foo");
@@ -312,9 +314,7 @@ println( "CLIENT: right before it crashes WE HOPE:" + outgoingPlayers.get(0).get
     thisMeasure = null;
     _playing = false;
     
-    // iterate over all upcoming measures.
-    // remember: preroll is min(4,offset);
-println("CLIENT: iterating over "+ upcomingMeasures.size() +" upcoming measures.");
+
       
   }
   // do this all the time.
@@ -323,6 +323,9 @@ println("CLIENT: iterating over "+ upcomingMeasures.size() +" upcoming measures.
 }
 
 void getUpcomingMeasuresAndPutThemHappyPlaces() {
+  // iterate over all upcoming measures.
+  // remember: preroll is min(4,offset);
+  println("CLIENT: iterating over "+ upcomingMeasures.size() +" upcoming measures.");
   for(Measure m : upcomingMeasures) {
     println("CLIENT: " + m.getPlayers().get(0).getAddress() + " (this should be my IP)");
     int startingMeasure = m.getStartingMeasure()+m.getPlayers().get(0).getOffsetMeasures();

@@ -282,12 +282,17 @@ private void metro(int tempo, int measureNum, int beatNum) {
     // check if we were playing something
     if (thisMeasure != null && thisMeasure.getPlayers().size() > 2) {
       // construct the new measure that we're gonna send out to the next person.
+println("CLIENT: before creating list of players");
       List<PlayerOffset> outgoingPlayers = new ArrayList<PlayerOffset>(thisMeasure.getPlayers());
+println("CLIENT: after creating list of players, we have " + outgoingPlayers.size() + " players.");
       outgoingPlayers.remove(0);  //remove ourselves
+println("CLIENT: we've removed the first player.");
       Measure outgoingMeasure = new Measure(_measureNum-1,
                                             outgoingPlayers,
                                             _myScore, "foo");
+println("CLIENT: we've constructed the outgoing measure"); 
       OscMessage outgoingMessage = assembleMessage(outgoingMeasure);
+println("CLIENT: we've constructed the outgoing message");
       NetAddress outgoingAddr = new NetAddress(outgoingPlayers.get(0).getAddress(),OSC_PORT);
 println( "CLIENT: right before it crashes WE HOPE:" + outgoingPlayers.get(0).getAddress() );      
       oscP5.send(outgoingMessage,outgoingAddr);
@@ -335,13 +340,15 @@ println( "CLIENT: right before it crashes WE HOPE:" + outgoingPlayers.get(0).get
 // find a good way to handle through Plug, due to the arbitrary
 // length of the message.
 void oscEvent(OscMessage message) {
-  println("CLIENT:" + message);
+println("CLIENT received message (before forwarding on):" + message);
   if (message.checkAddrPattern(MEASURE_ADDR) == true) {
+println("CLIENT received a MEASURE_ADDR; about to forward");
     Measure receivedMeasure = disassembleMessage(message);
+println("CLIENT: decoded received measure: " + receivedMeasure);
     upcomingMeasures.add(receivedMeasure);
-    println("CLIENT: " + receivedMeasure);
+println("CLIENT: Added to upcomingMeasures");
   }
-  println("CLIENT:" + message);
+  println("CLIENT AFTER SORTING OUT MESSAGE: " + message);
 }
 
 /**

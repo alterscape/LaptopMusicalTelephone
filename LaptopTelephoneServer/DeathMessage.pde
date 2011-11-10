@@ -10,6 +10,7 @@ public OscMessage assembleMessage(Measure measure) {
   List<PlayerOffset> nextPlayers = measure.getPlayers();
   
   OscMessage death = new OscMessage(MEASURE_ADDR);
+  death.add(measure.getStartingMeasure());
   death.add(notes.length);
   for(int i=0;i<notes.length;i++) {
     death.add(notes[i]);
@@ -29,6 +30,7 @@ public OscMessage assembleMessage(Measure measure) {
     death.add(p.getChair());
     death.add(p.getPart());
   }
+  
   return death;
 }
 
@@ -38,24 +40,26 @@ public Measure disassembleMessage(OscMessage death) {
   List<PlayerOffset> thesePlayers = new ArrayList<PlayerOffset>();
   
   // decode crazy shit yo
-  int numSubdivs = death.get(0).intValue();
+  
+  int startingMeasure = death.get(0).intValue();
+  int numSubdivs = death.get(1).intValue();
   thisMeasureNotes = new int[numSubdivs];
   for (int i=0;i<numSubdivs;i++) {
-    thisMeasureNotes[i] = death.get(i+1).intValue();
+    thisMeasureNotes[i] = death.get(i+2).intValue();
   }
   int numPlayers = death.get(1+numSubdivs).intValue();
   
   for (int i=0;i<numPlayers;i++) {
-    int offsetM = death.get(2+numSubdivs+(i*5)).intValue();
-    int offsetS = death.get(2+numSubdivs+(i*5+1)).intValue();
-    String addr = death.get(2+numSubdivs+(i*5+2)).stringValue();
-    int chair = death.get(2+numSubdivs+(i*5+3)).intValue();
-    int part = death.get(2+numSubdivs+(i*5+4)).intValue();
-
+    int offsetM = death.get(3+numSubdivs+(i*5)).intValue();
+    int offsetS = death.get(3+numSubdivs+(i*5+1)).intValue();
+    String addr = death.get(3+numSubdivs+(i*5+2)).stringValue();
+    int chair = death.get(3+numSubdivs+(i*5+3)).intValue();
+    int part = death.get(3+numSubdivs+(i*5+4)).intValue();
     
     PlayerOffset newPlyr = new PlayerOffset(offsetM,offsetS,addr, chair, part);
     thesePlayers.add(newPlyr);    
   }
-  //FIXME offset is hardcoded to zero for now
-  return new Measure(_measureNum,thesePlayers,thisMeasureNotes,"foo");
+  
+  
+  return new Measure(startingMeasure,thesePlayers,thisMeasureNotes,"foo");
 }

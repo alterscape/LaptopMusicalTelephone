@@ -104,12 +104,12 @@ private void sendBeat() {
       if (m.getStartingMeasure() == (_measureNum+4)) {
         // get our first player (the person the server has to send it to)
         PlayerOffset p = m.getPlayers().get(0);
-        println("About to send m:" +m);
+        println("SERVER: About to send m:" +m);
         NetAddress playerAddress = new NetAddress(p.getAddress(),OSC_PORT);
-        println("playerAdddress: " + playerAddress);
+        println("SERVER: playerAdddress: " + playerAddress);
         OscMessage deathMessage = assembleMessage(m);
         oscP5.send(deathMessage,playerAddress);
-        println("Sending " + deathMessage);
+        println("SERVER: Sending " + deathMessage);
       }
     }
   }
@@ -127,7 +127,7 @@ private void sendScore(Object[] measure, NetAddress target) {
 
 public void assignLaptops(String ip, int part, int chair)
 {
-  println("laptops assigned!");
+  println("SERVER: laptops assigned!");
   senderAssign.holala(ip, part, chair);
 }
 

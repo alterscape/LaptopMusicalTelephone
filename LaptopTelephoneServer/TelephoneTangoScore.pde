@@ -69,7 +69,7 @@ class TelephoneTangoScore
     }
     
     int E_1[] = createMeasure(E1); 
-    List<PlayerOffset> E_1_players = createPlayers(e1Measure_offset16, e1Measure_offset, e1Chairs, e1Parts);
+    List<PlayerOffset> E_1_players = createPlayers(e1Measure_offset, e1Measure_offset16, e1Chairs, e1Parts);
     Measure e1Measure  = new Measure(0, E_1_players, E_1, "Line E, Measure 1");         
     measures.add(e1Measure);    
     
@@ -92,7 +92,7 @@ class TelephoneTangoScore
     
     //create first measure of Part II
     int E_1[] = createMeasure(E1); 
-    List<PlayerOffset> E_1_players = createPlayers(e1Measure_offset16, e1Measure_offset, e1Chairs, e1Parts);
+    List<PlayerOffset> E_1_players = createPlayers(e1Measure_offset,e1Measure_offset16, e1Chairs, e1Parts);
     Measure e1Measure  = new Measure(25, E_1_players, E_1, "Line E, Measure 1");         
     measures.add(e1Measure);
     
@@ -102,7 +102,7 @@ class TelephoneTangoScore
     int[] e1Parts_1  = { 0, 1, 1 };
     int[] e1Measure_offset_1 = { 0, 1, 5 };
     int[] e1Measure_offset16_1 = { 0, 2, 0 };
-    List<PlayerOffset> E_1_players_1 = createPlayers(e1Measure_offset16_1, e1Measure_offset_1, e1Chairs_1, e1Parts_1);
+    List<PlayerOffset> E_1_players_1 = createPlayers(e1Measure_offset_1, e1Measure_offset16_1, e1Chairs_1, e1Parts_1);
     Measure e1Measure_1  = new Measure(41, E_1_players_1, E_1, "Line E, Measure 1 Round Pt. 1");         
     measures.add(e1Measure_1);
     
@@ -111,7 +111,7 @@ class TelephoneTangoScore
     int[] e1Parts_2  = { 1, 1, 2, 1, 0 };
     int[] e1Measure_offset_2 = { 0, 0, 0, 0, 2 };
     int[] e1Measure_offset16_2 = { 0, 1, 2, 4, 6 };
-    List<PlayerOffset> E_1_players_2 = createPlayers(e1Measure_offset16_2, e1Measure_offset_2, e1Chairs_2, e1Parts_2);
+    List<PlayerOffset> E_1_players_2 = createPlayers(e1Measure_offset_2, e1Measure_offset16_2, e1Chairs_2, e1Parts_2);
     Measure e1Measure_2  = new Measure(41, E_1_players_2, E_1, "Line E, Measure 1 Round Pt. 2");         
     measures.add(e1Measure_2);    
 
@@ -120,7 +120,7 @@ class TelephoneTangoScore
     int[] e1Parts_3  = { 2, 2, 0 };
     int[] e1Measure_offset_3 = { 0, 3, 4 };
     int[] e1Measure_offset16_3 = { 8, 0, 0 };
-    List<PlayerOffset> E_1_players_3 = createPlayers(e1Measure_offset16_3, e1Measure_offset_3, e1Chairs_3, e1Parts_3);
+    List<PlayerOffset> E_1_players_3 = createPlayers(e1Measure_offset_3, e1Measure_offset16_3, e1Chairs_3, e1Parts_3);
     Measure e1Measure_3  = new Measure(43, E_1_players_3, E_1, "Line E, Measure 1 Round Pt. 3");         
     measures.add(e1Measure_3);    
     
@@ -164,13 +164,13 @@ class TelephoneTangoScore
   }
   
   
-  List<PlayerOffset> createPlayers(int[] measure_offset16, int[] measure_offset, int[] chairs, int[] parts)
+  List<PlayerOffset> createPlayers(int[] measure_offset, int[] measure_offset16, int[] chairs, int[] parts)
   {   
       ArrayList<PlayerOffset> players = new ArrayList<PlayerOffset>(); 
       for( int i=0; i<chairs.length; i++)
       {
         TelephoneChair chair = network.getNode(parts[i], chairs[i]);
-        PlayerOffset info = new PlayerOffset(measure_offset16[i], measure_offset[i], chair.getIP(), chairs[i], parts[i]); 
+        PlayerOffset info = new PlayerOffset(measure_offset[i], measure_offset16[i], chair.getIP(), chairs[i], parts[i]); 
         players.add(info); 
       }
       return players;

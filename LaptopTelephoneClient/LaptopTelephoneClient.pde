@@ -287,7 +287,7 @@ private void metro(int tempo, int measureNum, int beatNum) {
                                             _myScore, "foo");
       OscMessage outgoingMessage = assembleMessage(outgoingMeasure);
       NetAddress outgoingAddr = new NetAddress(outgoingPlayers.get(0).getAddress(),OSC_PORT);
-println( "right before it crashes WE HOPE:" + outgoingPlayers.get(0).getAddress() );      
+println( "CLIENT: right before it crashes WE HOPE:" + outgoingPlayers.get(0).getAddress() );      
       oscP5.send(outgoingMessage,outgoingAddr);
       _playing = false;
     }
@@ -301,8 +301,8 @@ println( "right before it crashes WE HOPE:" + outgoingPlayers.get(0).getAddress(
       int startingMeasure = m.getStartingMeasure()+m.getPlayers().get(0).getOffsetMeasures();
       // if it falls outside of the area we can draw or play, ignore it.
       
-print("start" + startingMeasure+"\t");
-println("other stuff: "+ m.getPlayers().get(0).getOffsetMeasures());
+print("CLIENT: start" + startingMeasure+"\t");
+println("CLIENT: other stuff: "+ m.getPlayers().get(0).getOffsetMeasures());
       
       if ((startingMeasure < _measureNum) || (startingMeasure > _measureNum + 4 )) {
         continue;
@@ -324,13 +324,13 @@ println("other stuff: "+ m.getPlayers().get(0).getOffsetMeasures());
 // find a good way to handle through Plug, due to the arbitrary
 // length of the message.
 void oscEvent(OscMessage message) {
-  println(message);
+  println("CLIENT:" + message);
   if (message.checkAddrPattern(MEASURE_ADDR) == true) {
     Measure receivedMeasure = disassembleMessage(message);
     upcomingMeasures.add(receivedMeasure);
-    println(receivedMeasure);
+    println("CLIENT: " + receivedMeasure);
   }
-  println(message);
+  println("CLIENT:" + message);
 }
 
 /**
@@ -338,7 +338,7 @@ void oscEvent(OscMessage message) {
  **/
 
 void sayHolala() {
-  println("Saying holala!");
+  println("CLIENT: Saying holala!");
   OscMessage holalaMsg = new OscMessage(HOLALA_ADDR);
   holalaMsg.add(NetInfo.lan());
   holalaMsg.add(_rowNum);
@@ -368,7 +368,7 @@ void waitingForNextIp() {
 // UI CODE STARTS HERE
 public void commit(int code) {
   
-  println("Committing!");
+  println("CLIENT: Committing!");
   // hide the UI.
   chairBox.hide();
   rowBox.hide();

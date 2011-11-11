@@ -18,7 +18,6 @@
 import oscP5.*;
 import netP5.*;
 import supercollider.*;
-//import controlP5.*;
 
 /**
  * Report notes to NEXT PERSON IN LINE and SERVER
@@ -42,9 +41,10 @@ import supercollider.*;
  **/
 
 public static final int MEASURE_WIDTH = 850;  //px
-public static final int MEASURE_TOP = 50;
+public static final int MEASURE_TOP = 250;
 public static final int MEASURE_HEIGHT = 50;
 public static final int MAX_OFFSET = 16;
+public static final int STATUS_MESSAGE_Y = 600;
 
 public static final int STATE_PRE_HOLALA = 0;
 public static final int STATE_WAITING = 1;
@@ -73,9 +73,9 @@ private int[][] score = new int[4][SUBDIVISIONS];
 private int[] _myScore = new int[SUBDIVISIONS];
 
 // save the scores you actually played in past measures
-private int _tempo = 120;  // in bpm
+private int _tempo = 100;  // in bpm
 private int _beatNum = 0;
-private int _delay = 1;
+private int _delay = (60*1000/100)/4;
 private long _nextSubdiv = _delay;
 private int _subdivNum = 0;
 private NetAddress _nextPlayerAddr;
@@ -95,6 +95,8 @@ private int _measureNum;
 // declare early for speediness.
 private long _keypressTime;   
 private long _keyreleaseTime;
+
+private int _metroColor = 255;
 
 private Synth synth;
 
@@ -129,7 +131,7 @@ void draw() {
   //setup stuff
   if (_nextSubdiv <= millis()) {
     _nextSubdiv = millis() + _delay;
-    if (_subdivNum++ > SUBDIVISIONS) {
+    if (++_subdivNum >= SUBDIVISIONS) {
       _subdivNum = 0;
     }
   }
@@ -177,25 +179,40 @@ void draw() {
       }
       
       // highlight current beat.
-      float beatX = measureLeft + _beatNum * beatW;
+      //float beatX = measureLeft + _beatNum * beatW;
+     
+      
+      //fill(255,0,0,128);
+      //rect(beatX,MEASURE_TOP-100,beatW,MEASURE_HEIGHT);
+      
+      pushStyle();
+      
+      stroke(0);
+      
+      if (_metroColor > 0) {
+        _metroColor-= 10;
+      }
+      fill(_metroColor);
+      ellipse(width/2, 125, 100, 100);
+      popStyle();
+      
+      // draw current subdiv drum-machine size
       float subdivX = measureLeft + _subdivNum * beatW;
-      
-      fill(255,0,0,128);
-      rect(beatX,MEASURE_TOP,beatW,MEASURE_HEIGHT);
-      
       fill(255,0,255,128);
-      rect(subdivX,MEASURE_TOP,beatW,MEASURE_HEIGHT);
+      rect(subdivX,MEASURE_TOP-35,beatW,25);
       
       //draw what's coming
       fill(0);
-      text("Now",10,80);
-      text("Next",10,160);
+      text("Now",10,300);
+      text("Next",10,375);
       
       drawMeasure((int)measureLeft,MEASURE_TOP+100,MEASURE_WIDTH,(int)(MEASURE_HEIGHT/1.5),score[1],_beatNum);
       
       drawMeasure((int)measureLeft,MEASURE_TOP+200,MEASURE_WIDTH,(int)(MEASURE_HEIGHT/2),score[2],_beatNum);
       
       drawMeasure((int)measureLeft,MEASURE_TOP+300,MEASURE_WIDTH,(int)(MEASURE_HEIGHT/2.5),score[3],_beatNum);
+      
+      text("subdiv num is: " + _subdivNum, 50, 750);
   }
   
   fill(0);
@@ -203,7 +220,7 @@ void draw() {
     fill(0);
   else
     fill(255);
-  text(statusMessage,300,300); 
+  text(statusMessage,300,STATUS_MESSAGE_Y); 
 }
 
 // detects keypresses. 
@@ -286,16 +303,17 @@ private void metro(int tempo, int measureNum, int beatNum) {
   _nextSubdiv = millis() + _delay;
   _subdivNum = _beatNum;
   _measureNum = measureNum;
+  if (_subdivNum % 4 == 0) {
+    _metroColor = 255;
+    println("should start flashing metro");
+  }
   if (beatNum == 0) {  // on first beat of new measure
 println("CLIENT: FIRST BEAT OF NEW MEASURE "+ _measureNum + "\t FIRST BEAT OF NEW MEASURE MEASURE NUM IS " + _measureNum);;
     // check if we were playing something
     if (thisMeasure != null && thisMeasure.getPlayers().size() > 2) {
       // construct the new measure that we're gonna send out to the next person.
-//println("CLIENT: before creating list of players");
       List<PlayerOffset> outgoingPlayers = new ArrayList<PlayerOffset>(thisMeasure.getPlayers());
-//println("CLIENT: after creating list of players, we have " + outgoingPlayers.size() + " players.");
       outgoingPlayers.remove(0);  //remove ourselves
-//println("CLIENT: we've removed the first player.");
 println("CLIENT: myScore is: " + Arrays.toString(_myScore));
 
       int[] scoreToSend = new int[SUBDIVISIONS];
@@ -304,12 +322,9 @@ println("CLIENT: myScore is: " + Arrays.toString(_myScore));
       Measure outgoingMeasure = new Measure(thisMeasure.getStartingMeasure(),
                                             outgoingPlayers,
                                             scoreToSend, "foo");
-//println("CLIENT: we've constructed the outgoing measure");
 println("CLIENT: outgoing measure is " + outgoingMeasure);
       OscMessage outgoingMessage = assembleMessage(outgoingMeasure);
-//println("CLIENT: we've constructed the outgoing message");
       NetAddress outgoingAddr = new NetAddress(outgoingPlayers.get(0).getAddress(),OSC_PORT);
-//println( "CLIENT: right before it crashes WE HOPE:" + outgoingPlayers.get(0).getAddress() );      
       oscP5.send(outgoingMessage,outgoingAddr);
       _playing = false;
       upcomingMeasures.remove(thisMeasure);
@@ -332,15 +347,15 @@ println("CLIENT: outgoing measure is " + outgoingMeasure);
 void getUpcomingMeasuresAndPutThemHappyPlaces() {
   // iterate over all upcoming measures.
   // remember: preroll is min(4,offset);
-  println("CLIENT: iterating over "+ upcomingMeasures.size() +" upcoming measures.");
+  //println("CLIENT: iterating over "+ upcomingMeasures.size() +" upcoming measures.");
   for(Measure m : upcomingMeasures) {
-    println("CLIENT: " + m.getPlayers().get(0).getAddress() + " (this should be my IP)");
+    //println("CLIENT: " + m.getPlayers().get(0).getAddress() + " (this should be my IP)");
     int startingMeasure = m.getStartingMeasure()+m.getPlayers().get(0).getOffsetMeasures();
     // if it falls outside of the area we can draw or play, ignore it.
     
-    print("CLIENT: starting measure: " + m.getStartingMeasure() + "\t");
-    print(" calculated start" + startingMeasure +"\t");
-    println(" the first player's offset: "+ m.getPlayers().get(0).getOffsetMeasures());
+    //print("CLIENT: starting measure: " + m.getStartingMeasure() + "\t");
+    //print(" calculated start" + startingMeasure +"\t");
+    //println(" the first player's offset: "+ m.getPlayers().get(0).getOffsetMeasures());
     
     if ((startingMeasure < _measureNum) || (startingMeasure > _measureNum + 3 )) {
       continue;
@@ -348,7 +363,7 @@ void getUpcomingMeasuresAndPutThemHappyPlaces() {
     // ok, so where is it?
     
     int drawOffset = startingMeasure-_measureNum;
-    println("CLIENT: drawOffset is " + drawOffset);
+    //println("CLIENT: drawOffset is " + drawOffset);
     assert(drawOffset < 4 && drawOffset >=0);
     //println("CLIENT: ASSERTS PASSED");
     System.arraycopy( m.getNotes(),0,score[drawOffset],0,SUBDIVISIONS);

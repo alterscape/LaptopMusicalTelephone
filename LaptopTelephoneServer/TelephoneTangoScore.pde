@@ -1,6 +1,7 @@
 class TelephoneTangoScore
 {
   ArrayList<Measure> measures;
+  private final int playerNum = 10; 
   
   //note durations for easy transcription
   private final int[] h =    {1,0,0,0,0,0,0};
@@ -20,8 +21,12 @@ class TelephoneTangoScore
     measures = new ArrayList<Measure>(); 
   }
      
+ //------------------------------------------------------------------------------------------------------------------------------ 
+ //------------------------------------------------------------------------------------------------------------------------------ 
+ //------------------------------------------------------------------------------------------------------------------------------ 
+     
   public void createPartIII(int startMeasure)
-  {
+  {  
     
     //Part III
     int[][] F1 = { de, de, de, s, s, s, e, sr, s }; //Line F
@@ -46,13 +51,100 @@ class TelephoneTangoScore
     Measure measure2 = measure1.copy("Line F, Measure 2"); 
     measure2.incOneMeasure();
     measure2.setNotes(F_2); 
-    measures.add(measure2);        
+    measures.add(measure1);
+    measures.add(measure2);    
+    
+    
+    for( int i=0; i<playerNum; i++ )
+    {
+      playerMeasures = new ArrayList(playerMeasures); 
+      for( int j=0; j<motiveRepeat; j++ )
+      {
+         int index = i + ((j+1)%playerMeasures.size());
+         PlayerOffset po = ( PlayerOffset ) playerMeasures.get( index ) ;
+         ((PlayerOffset) playerMeasures.get(j)).setChairPart( po.getChair(), po.getPart() ); 
+      }
+      measure1 =  new Measure(startMeasure, playerMeasures, F_1, "Line F, Measure 1");  
+      measure2 = measure1.copy("Line F, Measure 2"); 
+      measure2.incOneMeasure();
+      measure2.setNotes(F_2); 
+      measures.add(measure1);
+      measures.add(measure2);   
+  
+    }  
   }
   
   
+ //------------------------------------------------------------------------------------------------------------------------------ 
+ //------------------------------------------------------------------------------------------------------------------------------ 
+  
+  
+  
+  public void createPartI(int startMeasure)
+  {
+    
+   int firstHugeLongThing {   
+    
+    //line A
+    //start m. 1
+    { { sr, s, s, er, sr, er, e, er, e },
+    { hr, qr, s, s, s, s },
+    { sr, s, s, sr, er, q, hr },
+    { dq, dq, q },
+    { dq, dq, q },
+    { q, q, q, q },
+    { e, e, s, s, e, e, s, s, e, e },
+    { q, q, q, q },
+    { sr, s, s, s, sr, s, s, s, sr, s, s, s, sr, s, s, s },
+    {e, e, s, s, q, q, s, s, q, q } },
+    
+    //line B
+    //start m. 1    
+    { { hr, e, e, qr },
+    { er, e, er, e, e, er, qr },
+    { er, e, er, e, e, er, er, s, s},
+    { dr, e, er, sr, s, s, s, s, s },
+    { e, e, s, s, e, er, e,  er},
+    { h, h },
+    { q, q, q, q },
+    { dq, dq, q},
+    { er, e, er, e, er, e , er, e},
+    { q, q, q, q } },    
+    
+    //line C
+    //start m. 0    
+    { { dq, dq, q },
+    { dq, e, e, er e },
+    { dq, e, e, er, e },
+    { dq, dq, q },
+    { dq, dq, d },
+    { dq, dq, sr, s, s, s },
+    { dq, dq, q },
+    { dq, dq, q },
+    { e, e, s, s, e, e, s, s, e, e },
+    { e, e, s, s, e, e, s, s, e, e } } };
+    
+    
+    
+    
+    //everyone plays this long piece of a thing once 
+    for ( int i = 0; i<network.getPartSize(); i++ )
+      for (int j =0; j<network.getChairSize(i); j++ )
+      {
+        
+      }
+
+
+  }
+
+    
+    
+ //------------------------------------------------------------------------------------------------------------------------------ 
+ //------------------------------------------------------------------------------------------------------------------------------ 
+ //------------------------------------------------------------------------------------------------------------------------------ 
   
   public void createPartIITest()
-  {
+  {    
     int[][] E1 = {dq, e, er, sr, s, s, s, s, s}; //Line E.1
     int[][] E2 = {e, e, s, s, e, er, e, er, e}; //Line E.2
     
@@ -77,9 +169,14 @@ class TelephoneTangoScore
     Measure e2Measure = e1Measure.copy("Line E, Measure 2"); 
     e2Measure.incOneMeasure();
     e2Measure.setNotes(E_2); 
-    measures.add(e2Measure);        
+    measures.add(e2Measure);      
     
   }
+
+ //------------------------------------------------------------------------------------------------------------------------------ 
+ //------------------------------------------------------------------------------------------------------------------------------ 
+ //------------------------------------------------------------------------------------------------------------------------------ 
+
      
   public void createPartII()
   { 
@@ -150,6 +247,10 @@ class TelephoneTangoScore
     measures.add(e2Measure_3);    
   }
 
+ //------------------------------------------------------------------------------------------------------------------------------ 
+ //------------------------------------------------------------------------------------------------------------------------------ 
+ //------------------------------------------------------------------------------------------------------------------------------ 
+
   
   private int[] createMeasure(int[][] mm)
   {
@@ -162,7 +263,10 @@ class TelephoneTangoScore
     }
     return measure; 
   }
-  
+
+ //------------------------------------------------------------------------------------------------------------------------------ 
+ //------------------------------------------------------------------------------------------------------------------------------ 
+ //------------------------------------------------------------------------------------------------------------------------------   
   
   List<PlayerOffset> createPlayers(int[] measure_offset, int[] measure_offset16, int[] chairs, int[] parts)
   {   
@@ -187,6 +291,10 @@ class TelephoneTangoScore
     }
     return mm_size;   
   }*/
+  
+ //------------------------------------------------------------------------------------------------------------------------------ 
+ //------------------------------------------------------------------------------------------------------------------------------ 
+ //------------------------------------------------------------------------------------------------------------------------------ 
   
   public List<Measure> getMeasures() {
     return measures;

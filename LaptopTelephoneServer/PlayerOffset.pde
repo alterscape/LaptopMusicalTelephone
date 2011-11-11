@@ -35,6 +35,12 @@ public class PlayerOffset {
     return _part;
   }
   
+  public void setChairPart(int c, int p)
+  {
+    _chair = c;
+    _part = p;
+  }
+  
   public PlayerOffset copy()
   {
     PlayerOffset player = new PlayerOffset(_offsetMeasures, _offsetSixteenths, _addr, _chair, _part);

@@ -10,9 +10,6 @@
  * This sketch depends on ProcessingCollider.
  * http://www.erase.net/projects/p5_sc/. 
  *
- * This sketch depends on ControlP5 for UI
- * http://www.sojamo.de/libraries/controlP5 
- *
  * SuperCollider must be running or else nothing of 
  * acoustic interest will happen.
  *
@@ -21,7 +18,7 @@
 import oscP5.*;
 import netP5.*;
 import supercollider.*;
-import controlP5.*;
+//import controlP5.*;
 
 /**
  * Report notes to NEXT PERSON IN LINE and SERVER
@@ -83,15 +80,10 @@ private long _nextSubdiv = _delay;
 private int _subdivNum = 0;
 private NetAddress _nextPlayerAddr;
 private NetAddress _serverAddr;
+private int _sampleNum = 2;
 
 private List<Measure> upcomingMeasures;
 private Measure thisMeasure;
-
-// UI stuff
-private ControlP5 controlP5;
-private Numberbox chairBox;
-private Numberbox rowBox;
-private Button commitButton;
 
 private int _rowNum;
 private int _chairNum;
@@ -110,17 +102,9 @@ void setup() {
   frameRate(60);
   size(1024,768);
   
-  // set up ControlP5 for UI
-  controlP5 = new ControlP5(this);
-  chairBox = controlP5.addNumberbox("chair",_chairNum,50,600,100,14);
-  chairBox.setMultiplier(1);
-  rowBox = controlP5.addNumberbox("row",_rowNum,50,628,100,14);
-  chairBox.setMultiplier(1);
-  commitButton = controlP5.addButton("commit",1,50,656,100,14);
-  
   oscP5 = new OscP5(this,6449);
-  // handle the simple messages first.
-  
+ 
+  // handle the simple messages first. 
   oscP5.plug(this,"setNextNodeAddress",NEXT_NODE_ADDR);
   oscP5.plug(this, "waitingForNextIp", UR_WAITING_ADDR);
   oscP5.plug(this, "errorReceived",ERROR_ADDR);
@@ -156,7 +140,7 @@ void draw() {
     case STATE_PRE_HOLALA:
       backgroundColor = color(255,255,0);
       //background(255,255,0);
-      statusMessage = "You are NOT connected. Get your chair and row number from the conductor and then commit!";
+      statusMessage = "You are NOT connected. Get your chair and row number from the conductor and then commit!\nRight now you are part " + _rowNum + ", chair " + _chairNum + ".";
       break;
     case STATE_WAITING:
       backgroundColor = color(255,255,100);
@@ -225,9 +209,33 @@ void draw() {
 // detects keypresses. 
 public void keyPressed() {
   _keypressTime = millis();
-  if (key == ' ') {  // player trying to play.
-    noteHappened(_keypressTime);
-    playNote(); 
+ 
+  if (currentState == STATE_PRE_HOLALA) {
+    if (key == 'q') {
+      _rowNum++;
+    } else if (key == 'a' && _rowNum > 0) {
+      _rowNum--;
+    } else if (key == 'w') {
+      _chairNum++;
+    } else if (key == 's' && _chairNum > 0) {
+      _chairNum--;
+    } else if (key == ' ') {
+      commit(0);
+    }
+    
+  } else {
+    if (key == ' ') {  // player trying to play.
+      noteHappened(_keypressTime);
+      playNote(); 
+    } else if (key == '1') {
+      _sampleNum = 0;
+    } else if (key == '2') {
+      _sampleNum = 1;
+    } else if (key == '3') {
+      _sampleNum = 2;
+    } else if (key == '4') {
+      _sampleNum = 3;
+    }
   }
 }
 
@@ -236,13 +244,13 @@ public void playNote()
 { 
   synth = new Synth("playPotsAndPans");
   synth.set("trig", 1);
-  synth.set("whichPot", 2); //which sample to trigger... right now there are 4
+  synth.set("whichPot", _sampleNum); //which sample to trigger... right now there are 4
   synth.create();  
 }
 
 public void keyReleased() {
   _keyreleaseTime = millis();
-  if (key == ' ') {
+  if (key == ' ' && currentState != STATE_PRE_HOLALA) {
     noteEnded(_keyreleaseTime);
   }
 }
@@ -404,10 +412,6 @@ void waitingForNextIp() {
 public void commit(int code) {
   
   println("CLIENT: Committing!");
-  // hide the UI.
-  chairBox.hide();
-  rowBox.hide();
-  commitButton.hide();
   sayHolala();
 }
 // UI CODE ENDS HERE.

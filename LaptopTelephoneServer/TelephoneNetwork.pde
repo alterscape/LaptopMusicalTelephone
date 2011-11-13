@@ -53,12 +53,11 @@ class TelephoneNetwork
   {
     //default network, 3 X 4... all equal... change for implementation
     this(3);
-    for(int i=0; i<partSize; i++)
-    {
-       createPart(i, 4);
-    }
-    defaultPath();
-    
+    createPart(0, 3);
+    createPart(1, 3);
+    createPart(2, 4);
+
+    defaultPath();    
   }
   
   void testWithTwo()

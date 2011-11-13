@@ -82,7 +82,7 @@ class TelephoneTangoScore
   
   public void createPartI(int startMeasure)
   {
-    
+   /* 
    int firstHugeLongThing {   
     
     //line A
@@ -133,7 +133,7 @@ class TelephoneTangoScore
       {
         
       }
-
+*/
 
   }
 

@@ -80,9 +80,20 @@ public class Measure {
     
   }
   
-  public String getSenderIP()
+  public String senderIP()
   {
     return _senderIP;
+  }
+  
+  public int nextChairInLine()
+  {
+    return ( (PlayerOffset) getPlayers().get(0)  ).getChair(); 
+  }
+  
+  public int nextPartInLine()
+  {
+    return ( (PlayerOffset) getPlayers().get(0)  ).getPart(); 
+  
   }
   
 }

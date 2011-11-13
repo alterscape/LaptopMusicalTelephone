@@ -1,3 +1,6 @@
+SpamAck spamAck;
+Thread ackThread;
+
 class TelephoneChair
 {
   String ip = "";
@@ -211,6 +214,17 @@ class TelephoneSenderAssignment
   */
    //we're ALIVE!!!!!!!
    sendChairWaitingMessage(chair);
+   
+           
+  // Create the object with the run() method
+  spamAck = new SpamAck(chair);
+    
+  // Create the thread supplying it with the runnable object
+  ackThread = new Thread();
+    
+  // Start the thread
+  ackThread.start(); 
+   
   }
   
   void sendChairNextIP(TelephoneChair chair)

@@ -35,10 +35,10 @@ public class PlayerOffset {
     return _part;
   }
   
-  public void setChairPart(int c, int p)
+  public void setChairPart(int chair, int part)
   {
-    _chair = c;
-    _part = p;
+    _chair = chair; 
+    _part = part; 
   }
   
   public PlayerOffset copy()

@@ -10,6 +10,7 @@ public OscMessage assembleMessage(Measure measure) {
   List<PlayerOffset> nextPlayers = measure.getPlayers();
   
   OscMessage death = new OscMessage(MEASURE_ADDR);
+  death.add(NetInfo.lan()); 
   death.add(measure.getStartingMeasure());
   death.add(notes.length);
   for(int i=0;i<notes.length;i++) {
@@ -40,26 +41,36 @@ public Measure disassembleMessage(OscMessage death) {
   List<PlayerOffset> thesePlayers = new ArrayList<PlayerOffset>();
   
   // decode crazy shit yo
+  int indexAdd = 0; //cycle through... this is incredibly dumb but we've totally had too many problems with this
   
-  int startingMeasure = death.get(0).intValue();
-  int numSubdivs = death.get(1).intValue();
+  String senderAddr = death.get(indexAdd).stringValue(); 
+  indexAdd++;
+  
+  int startingMeasure = death.get(indexAdd).intValue();
+  indexAdd++;
+  
+  int numSubdivs = death.get(indexAdd).intValue();
+  indexAdd++;
+  
   thisMeasureNotes = new int[numSubdivs];
   for (int i=0;i<numSubdivs;i++) {
-    thisMeasureNotes[i] = death.get(i+2).intValue();
+    thisMeasureNotes[i] = death.get(i+indexAdd).intValue();
   }
-  int numPlayers = death.get(2+numSubdivs).intValue();
+  int numPlayers = death.get(indexAdd+numSubdivs).intValue();
+  indexAdd++;
+
+  println("CLIENT: I totally have this many players: " + numPlayers);
   
   for (int i=0;i<numPlayers;i++) {
-    int offsetM = death.get(3+numSubdivs+(i*5)).intValue();
-    int offsetS = death.get(3+numSubdivs+(i*5+1)).intValue();
-    String addr = death.get(3+numSubdivs+(i*5+2)).stringValue();
-    int chair = death.get(3+numSubdivs+(i*5+3)).intValue();
-    int part = death.get(3+numSubdivs+(i*5+4)).intValue();
+    int offsetM = death.get(indexAdd+numSubdivs+(i*5)).intValue();
+    int offsetS = death.get(indexAdd+numSubdivs+(i*5+1)).intValue();
+    String addr = death.get(indexAdd+numSubdivs+(i*5+2)).stringValue();
+    int chair = death.get(indexAdd+numSubdivs+(i*5+3)).intValue();
+    int part = death.get(indexAdd+numSubdivs+(i*5+4)).intValue();
     
     PlayerOffset newPlyr = new PlayerOffset(offsetM,offsetS,addr, chair, part);
     thesePlayers.add(newPlyr);    
   }
   
-  
-  return new Measure(startingMeasure,thesePlayers,thisMeasureNotes,"foo");
+  return new Measure(startingMeasure,thesePlayers,thisMeasureNotes,"foo", senderAddr);
 }

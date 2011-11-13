@@ -323,7 +323,7 @@ println("CLIENT: myScore is: " + Arrays.toString(_myScore));
       println("CLIENT: scoreToSend is " + Arrays.toString(scoreToSend));
       Measure outgoingMeasure = new Measure(thisMeasure.getStartingMeasure(),
                                             outgoingPlayers,
-                                            scoreToSend, "foo");
+                                            scoreToSend, "foo", NetInfo.lan());
 println("CLIENT: outgoing measure is " + outgoingMeasure);
       OscMessage outgoingMessage = assembleMessage(outgoingMeasure);
       NetAddress outgoingAddr = new NetAddress(outgoingPlayers.get(0).getAddress(),OSC_PORT);
@@ -383,9 +383,19 @@ println("CLIENT received message (before forwarding on):" + message);
   if (message.checkAddrPattern(MEASURE_ADDR) == true) {
 //println("CLIENT received a MEASURE_ADDR; about to forward");
     Measure receivedMeasure = disassembleMessage(message);
-println("CLIENT: decoded received measure: " + receivedMeasure);
+    println("CLIENT: decoded received measure: " + receivedMeasure);
+    
+    
+    //send message to server that we GOT THAT MESSAGE
+    OscMessage msgIgotzIt = new OscMessage(GOTTEN_ADDR);
+    msgIgotzIt.add(receivedMeasure.nextPartInLine()); //add part
+    msgIgotzIt.add(receivedMeasure.nextChairInLine()); //add chair
+    oscP5.send(msgIgotzIt, new NetAddress(receivedMeasure.senderIP() ,OSC_PORT)); 
+    println("CLIENT: we just sent an acknowledgement to " + receivedMeasure.senderIP() + " with part #: " + receivedMeasure.nextPartInLine() + "and chair #: " + receivedMeasure.nextChairInLine() );
+
     upcomingMeasures.add(receivedMeasure);
 //println("CLIENT: Added to upcomingMeasures");
+    
   }
   //println("CLIENT AFTER SORTING OUT MESSAGE: " + message);
 }

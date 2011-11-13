@@ -59,7 +59,7 @@ public class Measure {
     Measure other = (Measure) otherObj;
     return (this.getStartingMeasure() == other.getStartingMeasure() &&
             this.getPlayers().equals(other.getPlayers()) &&
-            Arrays.equals(this.getNotes(),other.getNotes());
+            Arrays.equals(this.getNotes(),other.getNotes()));
     
   }
   

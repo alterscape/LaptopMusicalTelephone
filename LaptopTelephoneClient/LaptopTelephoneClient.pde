@@ -80,6 +80,7 @@ private long _nextSubdiv = _delay;
 private int _subdivNum = 0;
 private NetAddress _nextPlayerAddr;
 private NetAddress _serverAddr;
+private WaitingManager _waitingManager;
 private int _sampleNum = 2;
 
 private List<Measure> upcomingMeasures;
@@ -151,6 +152,10 @@ void draw() {
     case STATE_COMMUNICATING:
       backgroundColor = color(255,255,100);
       statusMessage = "Waiting for the server to acknowledge you said something.";
+      if (_waitingManager.shouldResend(millis())) {
+        sayHolala();
+      }
+      // if it's been more than n millis since we last sent holala, send it again!
       break;
     case STATE_ERROR:
       backgroundColor = color(255,0,0);
@@ -402,7 +407,8 @@ void sayHolala() {
   holalaMsg.add(_rowNum);
   holalaMsg.add(_chairNum);  
   _multicastOsc.send(holalaMsg);
-  currentState = STATE_READY;
+ // currentState = STATE_READY;
+ currentState = STATE_COMMUNICATING;
 }
 
 /**
@@ -428,6 +434,7 @@ public void commit(int code) {
   
   println("CLIENT: Committing!");
   sayHolala();
+  _waitingManager = new WaitingManager(millis(),1000);
 }
 // UI CODE ENDS HERE.
 

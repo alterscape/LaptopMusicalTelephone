@@ -96,8 +96,25 @@ public class Measure {
   
   }
   
+  public boolean sameMeasure(int start, int part, int chair)
+  {
+    boolean same = part == nextPartInLine();
+    same = same && ( chair == nextChairInLine() ); 
+    same = same && ( start == _startingMeasure ); 
+    return same; 
+  }
+  
   public String getMotiveName() {
     return _motiveName;
   }
   
+}
+
+
+class MeasureResendAttempts //fucking bitch
+{
+  public Measure measure; 
+  public int attempts = 0; 
+  
+  public MeasureResendAttempts(Measure m) { measure = m; } //the end 
 }

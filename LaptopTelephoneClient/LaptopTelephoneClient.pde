@@ -96,10 +96,14 @@ private int _measureNum;
 // declare early for speediness.
 private long _keypressTime;   
 private long _keyreleaseTime;
+private long _lastResendCheckTime;
+private long _resendCheckDelay = 500;
 
 private int _metroColor = 255;
 
 private Synth synth;
+
+private ArrayList<MeasureResendAttempts> waitingAckQueue = new ArrayList<MeasureResendAttempts>(); //this is fucked up YO
 
 void setup() {
   frameRate(60);
@@ -111,6 +115,7 @@ void setup() {
   oscP5.plug(this,"setNextNodeAddress",NEXT_NODE_ADDR);
   oscP5.plug(this, "waitingForNextIp", UR_WAITING_ADDR);
   oscP5.plug(this, "errorReceived",ERROR_ADDR);
+  oscP5.plug(this, "ackReceived", GOTTEN_ADDR);  
   
   // the multicast listener handles metronome events
   OscProperties multicastProps = new OscProperties();
@@ -129,6 +134,14 @@ void setup() {
 }
 
 void draw() {
+  
+  //check resend stuffz  NOW
+  if (_lastResendCheckTime < millis()) {
+    _lastResendCheckTime = millis() + _resendCheckDelay;
+    resendMeasure();
+  }
+  
+  
   //setup stuff
   if (_nextSubdiv <= millis()) {
     _nextSubdiv = millis() + _delay;
@@ -330,6 +343,9 @@ println("CLIENT: outgoing measure is " + outgoingMeasure);
       OscMessage outgoingMessage = assembleMessage(outgoingMeasure);
       NetAddress outgoingAddr = new NetAddress(outgoingPlayers.get(0).getAddress(),OSC_PORT);
       oscP5.send(outgoingMessage,outgoingAddr);
+      
+      waitingAckQueue.add(new MeasureResendAttempts(outgoingMeasure)); //adding to the queue to wait for acknowledgment
+      
       _playing = false;
       upcomingMeasures.remove(thisMeasure);
     }
@@ -387,13 +403,8 @@ println("CLIENT received message (before forwarding on):" + message);
     Measure receivedMeasure = disassembleMessage(message);
     println("CLIENT: decoded received measure: " + receivedMeasure);
     
+    sendAcknowledgement(receivedMeasure);
     
-    //send message to server that we GOT THAT MESSAGE
-    OscMessage msgIgotzIt = new OscMessage(GOTTEN_ADDR);
-    msgIgotzIt.add(receivedMeasure.nextPartInLine()); //add part
-    msgIgotzIt.add(receivedMeasure.nextChairInLine()); //add chair
-    
-    oscP5.send(msgIgotzIt, new NetAddress(receivedMeasure.senderIP() ,OSC_PORT)); 
     println("CLIENT: we just sent an acknowledgement to " + receivedMeasure.senderIP() + " with part #: " + receivedMeasure.nextPartInLine() + "and chair #: " + receivedMeasure.nextChairInLine() );
 
     upcomingMeasures.add(receivedMeasure);
@@ -401,6 +412,52 @@ println("CLIENT received message (before forwarding on):" + message);
     
   }
   //println("CLIENT AFTER SORTING OUT MESSAGE: " + message);
+}
+
+void resendMeasure()
+{
+  for(int i=0; i<waitingAckQueue.size(); i++)
+  {
+    Measure measure = waitingAckQueue.get(i).measure; 
+    println("CLIENT: RESENDING MEASURE HOL Y SHIT... this measure: " + measure);  
+    
+     //TODO: refactor
+     OscMessage outgoingMessage = assembleMessage(measure);
+     NetAddress outgoingAddr = new NetAddress(measure.getPlayers().get(0).getAddress(),OSC_PORT);
+     oscP5.send(outgoingMessage,outgoingAddr);
+     
+     waitingAckQueue.get(i).attempts++; 
+     
+     //MAYBE CAP APTTEMPTS WE SEEEEE
+   }
+}
+
+void sendAcknowledgement(Measure receivedMeasure)
+{
+    //send message to server that we GOT THAT MESSAGE
+    OscMessage msgIgotzIt = new OscMessage(GOTTEN_ADDR);
+   
+    msgIgotzIt.add(receivedMeasure.getStartingMeasure()); //add part
+    msgIgotzIt.add(receivedMeasure.nextPartInLine()); //add part
+    msgIgotzIt.add(receivedMeasure.nextChairInLine()); //add chair
+    oscP5.send(msgIgotzIt, new NetAddress(receivedMeasure.senderIP() ,OSC_PORT)); 
+}
+
+void ackReceived(int start, int part, int chair)
+{
+  int index = 0; 
+  boolean found = false;
+  while (!found && index < waitingAckQueue.size() ) 
+  {
+    found = waitingAckQueue.get(index).measure.sameMeasure(start, part, chair); //bwa ha ha ha ha
+    index++; 
+  }
+  
+  if ( found )
+  {
+    waitingAckQueue.remove(index-1); 
+  }
+  
 }
 
 /**

@@ -26,6 +26,8 @@ TelephoneSenderAssignment senderAssign;
 TelephoneTangoScore score;
 
 private List<Pattern> _patterns = new ArrayList<Pattern>();
+Thread spamThread; 
+SpamMeasuresThread spam;
 
 void setup() {
   
@@ -118,6 +120,16 @@ private void sendBeat() {
         println("\tSERVER: playerAdddress: " + playerAddress);
         OscMessage deathMessage = assembleMessage(m);
         oscP5.send(deathMessage,playerAddress);
+        
+  // Create the object with the run() method
+  spam = new SpamMeasuresThread(deathMessage,playerAddress);
+    
+  // Create the thread supplying it with the runnable object
+  spamThread = new Thread(spam);
+    
+  // Start the thread
+  spamThread.start();          
+        
         println("\tSERVER: Sending " + deathMessage);
       }
     }

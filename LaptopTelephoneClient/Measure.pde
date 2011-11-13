@@ -79,6 +79,11 @@ public class Measure {
             Arrays.equals(this.getNotes(),other.getNotes()));
     
   }
+
+  public void setSenderIP(String senderIP)
+  {
+     _senderIP = senderIP;
+  }
   
   public String senderIP()
   {

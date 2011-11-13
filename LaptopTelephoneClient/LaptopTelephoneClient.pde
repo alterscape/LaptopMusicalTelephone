@@ -137,13 +137,17 @@ void draw() {
     }
   }
   
-  String statusMessage = "You are Chair " + _chairNum + " in row " + _rowNum + ".";
+  String statusMessage = "You are Chair " + _chairNum + " in row " + _rowNum + ". It is measure " + _measureNum + ".\n" +
+                         "Green blocks in the top row = 'play here;'  Blue blocks in the top row = 'I've already played here.'\n" + 
+                         "Spacebar to play a beat. 1-4 keys to change the active sound sample.";
   background(backgroundColor);
   switch(currentState) {
     case STATE_PRE_HOLALA:
       backgroundColor = color(255,255,0);
       //background(255,255,0);
-      statusMessage = "You are NOT connected. Get your chair and row number from the conductor and then commit!\nRight now you are part " + _rowNum + ", chair " + _chairNum + ".";
+      statusMessage = "You are NOT connected. Get your chair and row number from the conductor and then commit!\n " +
+                      "Right now you are part " + _rowNum + ", chair " + _chairNum + ".\n\n" +
+                      "(Use Q/A to adjust part number; use W/S to adjust chair number.\n Press space to connect to the server.)";
       break;
     case STATE_WAITING:
       backgroundColor = color(255,255,100);
@@ -178,17 +182,11 @@ void draw() {
       for (int i=0; i<SUBDIVISIONS; i++) {
         if (_myScore[i] != 0) {
           float beatX = measureLeft + i*beatW;
-          fill(0,255,0,128);
+          fill(0,0,255,128);
           rect(beatX,MEASURE_TOP,beatW,MEASURE_HEIGHT);
         }
       }
       
-      // highlight current beat.
-      //float beatX = measureLeft + _beatNum * beatW;
-     
-      
-      //fill(255,0,0,128);
-      //rect(beatX,MEASURE_TOP-100,beatW,MEASURE_HEIGHT);
       
       pushStyle();
       
@@ -310,7 +308,6 @@ private void metro(int tempo, int measureNum, int beatNum) {
   _measureNum = measureNum;
   if (_subdivNum % 4 == 0) {
     _metroColor = 255;
-    println("should start flashing metro");
   }
   if (beatNum == 0) {  // on first beat of new measure
 println("CLIENT: FIRST BEAT OF NEW MEASURE "+ _measureNum + "\t FIRST BEAT OF NEW MEASURE MEASURE NUM IS " + _measureNum);;
@@ -368,11 +365,8 @@ void getUpcomingMeasuresAndPutThemHappyPlaces() {
     // ok, so where is it?
     
     int drawOffset = startingMeasure-_measureNum;
-    //println("CLIENT: drawOffset is " + drawOffset);
     assert(drawOffset < 4 && drawOffset >=0);
-    //println("CLIENT: ASSERTS PASSED");
     System.arraycopy( m.getNotes(),0,score[drawOffset],0,SUBDIVISIONS);
-    //println("CLIENT: ARRAYCOPY WORKED");
     // if it's now, then update things!
     if (drawOffset == 0) {
       thisMeasure = m;

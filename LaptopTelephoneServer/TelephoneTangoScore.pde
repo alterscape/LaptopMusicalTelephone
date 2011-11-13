@@ -1,7 +1,7 @@
 class TelephoneTangoScore
 {
   ArrayList<Measure> measures;
-  private final int playerNum = 10; 
+  private final int playerNum = 2; //change laterz
   
   //note durations for easy transcription
   private final int[] h =    {1,0,0,0,0,0,0};

@@ -390,6 +390,7 @@ println("CLIENT received message (before forwarding on):" + message);
     OscMessage msgIgotzIt = new OscMessage(GOTTEN_ADDR);
     msgIgotzIt.add(receivedMeasure.nextPartInLine()); //add part
     msgIgotzIt.add(receivedMeasure.nextChairInLine()); //add chair
+    
     oscP5.send(msgIgotzIt, new NetAddress(receivedMeasure.senderIP() ,OSC_PORT)); 
     println("CLIENT: we just sent an acknowledgement to " + receivedMeasure.senderIP() + " with part #: " + receivedMeasure.nextPartInLine() + "and chair #: " + receivedMeasure.nextChairInLine() );
 

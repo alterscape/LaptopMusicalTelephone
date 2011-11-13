@@ -77,6 +77,8 @@ public void draw() {
 private void startTelephoneTango() {
   score = new TelephoneTangoScore(); 
    score.createPartIITest();
+   score.createPartIII(19);  
+
   //score.createPartII();
   //score.createPartIII(19);  
   _nextBeat = millis();

@@ -85,6 +85,10 @@ public class Measure {
     return _senderIP;
   }
   
+  public void setSenderIP(String ip) {
+    _senderIP = ip;
+  }
+  
   public int nextChairInLine()
   {
     return ( (PlayerOffset) getPlayers().get(0)  ).getChair(); 

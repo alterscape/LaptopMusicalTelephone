@@ -16,6 +16,8 @@ String debugOutput = "";
 String debugOutput2 = "";
 String debugOutput3 = "";
 
+String _myAddress = NetInfo.lan();
+
 String _status;
 
 
@@ -109,6 +111,7 @@ private void sendBeat() {
         // get our first player (the person the server has to send it to)
         PlayerOffset p = m.getPlayers().get(0);
         println("\tSERVER: About to send m:" +m);
+        m.setSenderIP(_myAddress);
         NetAddress playerAddress = new NetAddress(p.getAddress(),OSC_PORT);
         println("\tSERVER: playerAdddress: " + playerAddress);
         OscMessage deathMessage = assembleMessage(m);

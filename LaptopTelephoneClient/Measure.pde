@@ -53,4 +53,14 @@ public class Measure {
     return mine;
   }
   
+  public boolean equals(Object otherObj) {
+    if (!(otherObj instanceof Measure) )
+      return false;
+    Measure other = (Measure) otherObj;
+    return (this.getStartingMeasure() == other.getStartingMeasure() &&
+            this.getPlayers().equals(other.getPlayers()) &&
+            Arrays.equals(this.getNotes(),other.getNotes()));
+    
+  }
+  
 }

@@ -52,4 +52,15 @@ public class PlayerOffset {
        return "_offsetMeasures: " + _offsetMeasures + "  _offsetSixteenths:" + _offsetSixteenths + "  _addr: " + _addr + "  _chair" + _chair + "  _part:" + _part;
   }
   
+  public boolean equals(Object otherObj) {
+    if (! (otherObj instanceof PlayerOffset)) 
+      return false;
+    PlayerOffset other = (PlayerOffset) otherObj;
+    return (this.getOffsetMeasures() == other.getOffsetMeasures() &&
+            this.getOffsetSixteenths() == other.getOffsetSixteenths() &&
+            this.getAddress().equals(other.getAddress()) &&
+            this.getChair() == other.getChair() &&
+            this.getPart() == other.getPart() );
+  }
+  
 }

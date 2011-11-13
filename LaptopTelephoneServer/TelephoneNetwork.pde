@@ -188,7 +188,7 @@ class TelephoneSenderAssignment
   {
     //set the ip address of the node
     TelephoneChair chair = network.getNode(part, chairNum); 
-    if (chair.hasIP()) {
+    if (chair.hasIP() && (!chair.getIP().equals(ip))) {
       sendChairError(ip);
       return;
     }

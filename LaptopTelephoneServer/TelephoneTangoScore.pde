@@ -82,7 +82,7 @@ class TelephoneTangoScore
   
   public void createPartI(int startMeasure)
   {
-    
+   /*
    int firstHugeLongThing {   
     
     //line A
@@ -124,7 +124,7 @@ class TelephoneTangoScore
     { e, e, s, s, e, e, s, s, e, e },
     { e, e, s, s, e, e, s, s, e, e } } };
     
-    
+    */
     
     
     //everyone plays this long piece of a thing once 

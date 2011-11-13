@@ -96,4 +96,8 @@ public class Measure {
   
   }
   
+  public String getMotiveName() {
+    return _motiveName;
+  }
+  
 }

@@ -193,7 +193,7 @@ void draw() {
       stroke(0);
       
       if (_metroColor > 0) {
-        _metroColor-= 10;
+        _metroColor-= 100;
       }
       fill(_metroColor);
       ellipse(width/2, 125, 100, 100);
@@ -323,7 +323,9 @@ println("CLIENT: myScore is: " + Arrays.toString(_myScore));
       println("CLIENT: scoreToSend is " + Arrays.toString(scoreToSend));
       Measure outgoingMeasure = new Measure(thisMeasure.getStartingMeasure(),
                                             outgoingPlayers,
-                                            scoreToSend, "foo", NetInfo.lan());
+                                            scoreToSend, 
+                                            thisMeasure.getMotiveName(), 
+                                            NetInfo.lan());
 println("CLIENT: outgoing measure is " + outgoingMeasure);
       OscMessage outgoingMessage = assembleMessage(outgoingMeasure);
       NetAddress outgoingAddr = new NetAddress(outgoingPlayers.get(0).getAddress(),OSC_PORT);

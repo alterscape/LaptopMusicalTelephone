@@ -326,7 +326,7 @@ println("CLIENT: myScore is: " + Arrays.toString(_myScore));
       println("CLIENT: scoreToSend is " + Arrays.toString(scoreToSend));
       Measure outgoingMeasure = new Measure(thisMeasure.getStartingMeasure(),
                                             outgoingPlayers,
-                                            scoreToSend, "foo");
+                                            scoreToSend, "foo", NetInfo.lan());
 println("CLIENT: outgoing measure is " + outgoingMeasure);
       OscMessage outgoingMessage = assembleMessage(outgoingMeasure);
       NetAddress outgoingAddr = new NetAddress(outgoingPlayers.get(0).getAddress(),OSC_PORT);
@@ -392,6 +392,7 @@ println("CLIENT received message (before forwarding on):" + message);
 println("CLIENT: decoded received measure: " + receivedMeasure);
     upcomingMeasures.add(receivedMeasure);
 //println("CLIENT: Added to upcomingMeasures");
+    
   }
   //println("CLIENT AFTER SORTING OUT MESSAGE: " + message);
 }

@@ -395,7 +395,8 @@ println("CLIENT received message (before forwarding on):" + message);
     oscP5.send(msgIgotzIt, new NetAddress(receivedMeasure.senderIP() ,OSC_PORT)); 
     println("CLIENT: we just sent an acknowledgement to " + receivedMeasure.senderIP() + " with part #: " + receivedMeasure.nextPartInLine() + "and chair #: " + receivedMeasure.nextChairInLine() );
 
-    upcomingMeasures.add(receivedMeasure);
+    if (!upcomingMeasures.contains(receivedMeasure))
+      upcomingMeasures.add(receivedMeasure);
 //println("CLIENT: Added to upcomingMeasures");
     
   }

@@ -50,10 +50,15 @@ void setup() {
              
  //init my telephone networks!
  network = new TelephoneNetwork(); 
- network.testWithTwo();
+ //network.testWithTwo();
  senderAssign = new TelephoneSenderAssignment(network);
  // score has to come after network, because score depends on network.
-
+ 
+/* 
+ TelephoneTangoScore score = new TelephoneTangoScore();
+ score.createPartIII(0); 
+ println(score); 
+*/
 }
 
 public void draw() {

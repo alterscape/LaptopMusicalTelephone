@@ -242,6 +242,8 @@ void draw() {
 // detects keypresses. 
 public void keyPressed() {
   _keypressTime = millis();
+  
+  println("CLIENT: currentState is: " + currentState ); 
  
   if (currentState == STATE_PRE_HOLALA) {
     if (key == 'q') {

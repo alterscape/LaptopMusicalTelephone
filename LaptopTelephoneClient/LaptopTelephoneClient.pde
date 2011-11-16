@@ -303,15 +303,16 @@ private void noteHappened(long whenItHappened) {
 private void noteEnded(long whenItHappened) {}
 
 private int quantize(long deltaThisMeasure) {
-  int whichSubdiv = 0;
-    if (deltaThisMeasure < (_delay/2)){
-      whichSubdiv = _subdivNum + 1;
-      if (whichSubdiv > _myScore.length-1)
-        whichSubdiv = _myScore.length-1;
-    } else {
-      whichSubdiv = _subdivNum;
-    }   
-    return whichSubdiv;
+//  int whichSubdiv = 0;
+//  if (deltaThisMeasure < (_delay/2)){
+//     whichSubdiv = _subdivNum + 1;
+//      if (whichSubdiv > _myScore.length-1)
+//        whichSubdiv = _myScore.length-1;
+//    } else {
+//      whichSubdiv = _subdivNum;
+//    }   
+//    return whichSubdiv;
+  return _subdivNum;
 }
 
 private void metro(int tempo, int measureNum, int beatNum) {

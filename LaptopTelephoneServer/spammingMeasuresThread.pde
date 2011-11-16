@@ -43,14 +43,14 @@ class SpamAck implements Runnable {
     
               //sends the next chair IP, THEN the server IP to the client that needs them.
               OscMessage msg = new OscMessage(NEXT_NODE_ADDR);
-              msg.add(chair.getNextChair().getIP());
+              msg.add(_chair.getNextChair().getIP());
               msg.add(NetInfo.lan()); 
     
-              NetAddress laptop_location = new NetAddress(chair.getIP(),OSC_PORT);
+              NetAddress laptop_location = new NetAddress(_chair.getIP(),OSC_PORT);
     
               oscP5.send(msg, laptop_location); 
               try {
-                  spamAckThread.sleep(500); 
+                  ackThread.sleep(500); 
 	          } catch(InterruptedException e) {
 	          e.printStackTrace();
 	          }

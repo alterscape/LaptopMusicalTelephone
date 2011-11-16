@@ -24,6 +24,11 @@ class TelephoneTangoScore
  //------------------------------------------------------------------------------------------------------------------------------ 
  //------------------------------------------------------------------------------------------------------------------------------ 
  //------------------------------------------------------------------------------------------------------------------------------ 
+ 
+  public String toString()
+  {
+    return measures.toString();
+  }   
      
   public void createPartIII(int startMeasure)
   {  
@@ -36,42 +41,44 @@ class TelephoneTangoScore
     
     
     final int motiveRepeat = 5; 
-    ArrayList<PlayerOffset> playerMeasures = new ArrayList<PlayerOffset>();
     
-
-    //create first player array & player
-    for( int i=0; i<motiveRepeat; i++ )
-      for( int partIndex=0; partIndex<network.getPartSize(); partIndex++ )
-        for( int chairIndex=0; chairIndex<network.getChairSize(partIndex); chairIndex++ )
-        {
-            TelephoneChair chair = network.getNode(partIndex, chairIndex);
-            playerMeasures.add( new PlayerOffset(i*2, 0, chair.getIP() , chairIndex, partIndex) );       
-        }
-    Measure measure1 =  new Measure(startMeasure, playerMeasures, F_1, "Line F, Measure 1");  
-    Measure measure2 = measure1.copy("Line F, Measure 2"); 
-    measure2.incOneMeasure();
-    measure2.setNotes(F_2); 
-    measures.add(measure1);
-    measures.add(measure2);    
-    
-    
-    for( int i=0; i<playerNum; i++ )
+    for (int index=0; index<network.getPartSize(); index++)
+    for (int j=0; j<network.getChairSize(index); j++)
     {
-      playerMeasures = new ArrayList(playerMeasures); 
-      for( int j=0; j<motiveRepeat; j++ )
-      {
-         int index = i + ((j+1)%playerMeasures.size());
-         PlayerOffset po = ( PlayerOffset ) playerMeasures.get( index ) ;
-         ((PlayerOffset) playerMeasures.get(j)).setChairPart( po.getChair(), po.getPart() ); 
+       int partIndex = index;
+       int chairIndex = j;
+       ArrayList<PlayerOffset> playerMeasures = new ArrayList<PlayerOffset>();
+
+        
+       for( int i=0; i<motiveRepeat; i++ )
+       {
+         TelephoneChair chair = network.getNode(partIndex, chairIndex);
+         playerMeasures.add( new PlayerOffset(i*2, 0, chair.getIP() , chairIndex, partIndex) );   
+ 
+          //println("chair is: " + chairIndex + " partIndex is: " + partIndex); 
+
+      
+         chairIndex++;
+         if (chairIndex >= network.getChairSize(partIndex))
+         {
+           chairIndex = 0;
+           partIndex++; 
+           if (partIndex >= network.getPartSize()) 
+           {
+             partIndex = 0;
+           }   
+         }   
       }
-      measure1 =  new Measure(startMeasure, playerMeasures, F_1, "Line F, Measure 1");  
-      measure2 = measure1.copy("Line F, Measure 2"); 
+    
+      Measure measure1 =  new Measure(startMeasure, playerMeasures, F_1, "Line F, Measure 1");  
+      Measure measure2 = measure1.copy("Line F, Measure 2"); 
       measure2.incOneMeasure();
       measure2.setNotes(F_2); 
       measures.add(measure1);
-      measures.add(measure2);   
-  
-    }  
+      measures.add(measure2);    
+      
+    }
+
   }
   
   

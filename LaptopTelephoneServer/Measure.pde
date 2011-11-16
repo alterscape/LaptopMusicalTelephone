@@ -64,9 +64,15 @@ public class Measure {
     return newMeasure; 
   }
   
-  String toString()
+  public String toString()
   {
-    String mine =  "_startingMeasure " + _startingMeasure + "   _players: " + _players + "  _notes: " + Arrays.toString(_notes) + "  newMotiveName: " + _motiveName;
+    String mine =  "_startingMeasure " + _startingMeasure +  "  _notes: " + Arrays.toString(_notes) + "  newMotiveName: " + _motiveName +"\n";
+    mine = mine +"   _players: \n";
+    for (int i=0; i < _players.size(); i++)
+    {
+      mine = mine + nf(i, 2) + _players.get(i).toString() + "\n"; 
+    }
+    mine = mine + "=========\n";
     return mine;
   }
   

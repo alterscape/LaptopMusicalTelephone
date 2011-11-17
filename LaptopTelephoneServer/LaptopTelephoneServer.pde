@@ -4,7 +4,7 @@ import netP5.*;
 private OscP5 oscP5;
 private OscP5 _metroMulticastOsc;
 private NetAddress remoteLocation;
-private int tempo = 100;
+private int tempo = 80;
 
 private int _wait_ms = 60000/tempo;
 private long _nextBeat = 0;
@@ -50,15 +50,28 @@ void setup() {
              
  //init my telephone networks!
  network = new TelephoneNetwork(); 
- //network.testWithTwo();
+// network.testWithPartChair(2, 2);
  senderAssign = new TelephoneSenderAssignment(network);
  // score has to come after network, because score depends on network.
- 
-/* 
+  
+  /*
  TelephoneTangoScore score = new TelephoneTangoScore();
- score.createPartIII(0); 
- println(score); 
+ 
+ int measures = score.createPartI(0); 
+ measures = score.createPartIITest(measures);
+ measures = score.createPartIII(measures);
+ 
+ measures = score.createPartI(measures);  
+ measures = score.createPartIITest(measures); 
+ measures = score.createPartIII(measures);
+ 
+ measures = score.createPartI(measures); 
+ measures = score.createPartIITest(measures);
+ measures = score.createPartIII(measures); 
 */
+ 
+ //println(score); 
+
 }
 
 public void draw() {
@@ -85,11 +98,22 @@ public void draw() {
 
 private void startTelephoneTango() {
   score = new TelephoneTangoScore(); 
-   score.createPartIITest();
-   score.createPartIII(19);  
 
-  //score.createPartII();
-  //score.createPartIII(19);  
+//current full score
+ int measures = score.createPartI(0); 
+ measures = score.createPartIITest(measures);
+ measures = score.createPartIII(measures);
+ 
+ measures = score.createPartI(measures);  
+ measures = score.createPartIITest(measures); 
+ measures = score.createPartIII(measures);
+ 
+ measures = score.createPartI(measures); 
+ measures = score.createPartIITest(measures);
+ measures = score.createPartIII(measures);  
+
+  //score.createPartII(2);
+ // score.createPartIII(2);  
   _nextBeat = millis();
   _running = true;
   _status = "Playing...";

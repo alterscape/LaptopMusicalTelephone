@@ -63,11 +63,14 @@ class TelephoneNetwork
     defaultPath();    
   }
   
-  void testWithTwo()
+  void testWithPartChair(int part,  int chair)
   {
-    parts = new ArrayList(1);
-    partSize = 1; 
-    createPart(0, 2);
+    parts = new ArrayList(part);
+    partSize = part; 
+    for (int i=0; i<part; i++)
+    {
+      createPart(i, chair);
+    }
     isInit = true; //that's RIGHT I am circumventing my own safegaurds...!!!!!!!! 
   }
   
@@ -78,6 +81,16 @@ class TelephoneNetwork
     
     return ( (TelephoneChair[]) parts.get(index) ).length; 
   } 
+  
+  public int getPlayerCount()
+  {
+    int sum = 0;
+    for (int i=0; i<getPartSize(); i++)
+    {
+        sum += getChairSize(i);
+    }
+    return sum; 
+  }
   
   void createPart(int partIndex, int chairNum)
   //create a part with a particular 

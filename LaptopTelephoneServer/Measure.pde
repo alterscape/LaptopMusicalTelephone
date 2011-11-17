@@ -1,4 +1,6 @@
 public class Measure {
+ 
+  
   private int _startingMeasure;
   private List<PlayerOffset> _players;
   private int[] _notes;
@@ -29,7 +31,6 @@ public class Measure {
     }
   }  
   
-
   public int getStartingMeasure() {
     return _startingMeasure;
   }
@@ -129,3 +130,4 @@ class MeasureResendAttempts //fucking bitch
   
   public MeasureResendAttempts(Measure m) { measure = m; } //the end 
 }
+

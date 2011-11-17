@@ -1,64 +1,74 @@
 {\rtf1\ansi\ansicpg1252\cocoartf1138
 {\fonttbl\f0\fmodern\fcharset0 Courier;}
-{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
-\red96\green96\blue96;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue0;\red0\green0\blue191;
+\red0\green115\blue0;\red96\green96\blue96;}
 \deftab720
 \pard\pardeftab720
 
-\f0\fs24 \cf2 //Courtney Brown --> my standard synth shit for TelephoneTango\cf0 \
+\f0\fs24 \cf2 //Courtney Brown --> my standard synth shit for TelephoneTango\cf3 \
 \
-\cf2 //not used yet.  will be used as well, fyi\cf0 \
+\
+\cf2 //Test Tone --> is my supercollider shiz werkin'?\cf3 \
 (\
-\cf3 SynthDef\cf0 (\cf4 \\audio_reson_out\cf0 , \{ \cf3 |inBus = 1, bufnum = 0, outbus = 0, amp = 0.5, loop = 0,\
-                        pan = 0, rate = 1.0, pitch_index = 1, bandwidth_ratio = 0.01|\cf0 \
-                        \
-        \cf3 var\cf0  xout, in_amp, d_pitches, d_pitch_indices, octave;\
-        in_amp = \cf3 In\cf0 .ar(inBus);\
-        octave = 1;\
+\{\cf4 SinOsc\cf3 .ar(440)\}.play;\
+ )\
+\
+\cf2 //currently used.  Please select and enter by pressing 'fn + return'\cf3 \
+(\
+\cf4 SynthDef\cf3 (\cf5 \\playPotsAndPans\cf3 , \{ \cf4 | whichPot = 0, outbus = 1, amp = 1, loop = 0,\
+                        pan = 0, rate = 1.0, pitch_index = 1, bandwidth_ratio = 0.5, trig=0 |\cf3 \
         \
-\pard\pardeftab560
-\cf2 //	d_pitch_indices = [10, 2, 7, 9, 2, 8, 2, 9, 7, 7, 2, 8, 8];        \cf0 \
-\cf2 //	d_pitches = Array.fill(d_pitch_indices[0], \{(62+(12*octave)).midicps\});\cf0 \
-\cf2 //	1.for(d_pitch_indices.size-1, \{ |i|d_pitches = 	d_pitches.addAll(Array.fill(d_pitch_indices[i], \{(62+i\cf0 \
-\cf2 //	+(12*octave)).midicps\}))\}) ;\cf0 \
-\pard\pardeftab720
-\cf0         \
-    xout = 0;\
-    6.for(1, \{ \cf3 |i|\cf0 \
-\pard\pardeftab560
-\cf0 		xout = xout + \cf3 Resonz\cf0 .ar(in_amp, \cf3 Select\cf0 .kr(pitch_index, d_pitches)*i, bandwidth_ratio, 1/(i+1)); \
-\pard\pardeftab720
-\cf0 	\}); \
-                \
-    \cf3 Out\cf0 .ar(outbus, xout);\
-    \
+        \cf4 var\cf3  data, sndFile, pots, path, index, playing;\
+        index = 0;\
+        pots = [\cf6 "sounds/grater2.wav"\cf3 , \cf6 "sounds/potlid2.wav"\cf3 , \cf6 "sounds/bigpot2.wav"\cf3 , \cf6 "sounds/pan3.wav"\cf3 , \
+        \cf6 "sounds/bigpot4.wav"\cf3 , \cf6 "sounds/bigpot6.wav"\cf3 , \cf6 "sounds/orgdicer3.wav"\cf3 , \cf6 "sounds/grater3.wav"\cf3 , \
+        \cf6 "sounds/smalstrain3.wav"\cf3 , \cf6 "sounds/pan2.wav"\cf3 ];\
+        \
+        \cf2 //add pitch? how much?\cf3 \
+        \cf2 //add pitch in the preceding synth def    \cf3 \
+      \
+        \
+          sndFile = \cf4 Array\cf3 .fill(pots.size, \{ \cf4 |i|\cf3  \cf4 var\cf3  buf; buf = \cf4 Buffer\cf3 .read(s, pots[i]);  buf.bufnum; \} );\
+          \
+         data = \cf4 PlayBuf\cf3 .ar(1, \cf4 Select\cf3 .kr(whichPot, sndFile));\
+          \cf4 FreeSelfWhenDone\cf3 .kr(data);\
+          \cf4 Out\cf3 .ar(outbus, \cf4 Pan2\cf3 .ar(data, pan, amp));\
+          \cf4 Out\cf3 .ar(0, \cf4 Pan2\cf3 .ar(data, pan, amp)); \
+\
 \}).load(s);\
 )\
 \
-\cf2 //Test Tone --> is my supercollider shiz werkin'?\cf0 \
+\cf2 //Test yr. shiz here\cf3 \
 (\
-\cf3 \{SinOsc\cf0 .ar(440)\}.play;\
- )\
+a = \cf4 Synth\cf3 (\cf5 \\playPotsAndPans\cf3 , [\cf5 \\whichPot\cf3 , 9]);\
+)\
 \
-\cf2 //currently used.\cf0 \
-(\
-\cf3 SynthDef\cf0 (\cf4 \\playPotsAndPans\cf0 , \{ \cf3 | whichPot = 0, outbus = 1, amp = 1, loop = 0,\
-                        pan = 0, rate = 1.0, pitch_index = 1, bandwidth_ratio = 0.5, trig=0 |\cf0 \
-        \
-        \cf3 var\cf0  data, sndFile, pots, path, index, playing;\
-        index = 0;\
-        pots = [\cf5 "sounds/grater2.wav"\cf0 , \cf5 "sounds/potlid2.wav"\cf0 , \cf5 "sounds/bigpot2.wav"\cf0 , \cf5 "sounds/pan3.wav"\cf0 ];\
-        \
-        \cf2 //add pitch? how much?\cf0 \
-        \cf2 //add pitch in the preceding synth def    \cf0 \
-      \
-        \
-          sndFile = \cf3 Array\cf0 .fill(pots.size, \{ \cf3 |i|\cf0  \cf3 var\cf0  buf; buf = \cf3 Buffer\cf0 .read(s, pots[i]);  buf.bufnum; \} );\
-          \
-         data = \cf3 PlayBuf\cf0 .ar(1, \cf3 Select\cf0 .kr(whichPot, sndFile));\
-          \cf3 FreeSelfWhenDone\cf0 .kr(data);\
-          \cf3 Out\cf0 .ar(outbus, \cf3 Pan2\cf0 .ar(data, pan, amp));\
-          \cf3 Out\cf0 .ar(0, \cf3 Pan2\cf0 .ar(data, pan, amp)); \
 \
+\
+\cf2 //not used yet.  will be used as well, fyi\cf3 \
+\cf2 /*(\
+SynthDef(\\audio_reson_out, \{ |inBus = 1, bufnum = 0, outbus = 0, amp = 0.5, loop = 0,\
+                        pan = 0, rate = 1.0, pitch_index = 1, bandwidth_ratio = 0.01|\
+                        \
+        var xout, in_amp, d_pitches, d_pitch_indices, octave;\
+        in_amp = In.ar(inBus);\
+        octave = 1;\
+        \
+\pard\pardeftab560
+\cf2 //	d_pitch_indices = [10, 2, 7, 9, 2, 8, 2, 9, 7, 7, 2, 8, 8];        \
+//	d_pitches = Array.fill(d_pitch_indices[0], \{(62+(12*octave)).midicps\});\
+//	1.for(d_pitch_indices.size-1, \{ |i|d_pitches = 	d_pitches.addAll(Array.fill(d_pitch_indices[i], \{(62+i\
+//	+(12*octave)).midicps\}))\}) ;\
+\pard\pardeftab720
+\cf2         \
+    xout = 0;\
+    6.for(1, \{ |i|\
+\pard\pardeftab560
+\cf2 		xout = xout + Resonz.ar(in_amp, Select.kr(pitch_index, d_pitches)*i, bandwidth_ratio, 1/(i+1)); \
+\pard\pardeftab720
+\cf2 	\}); \
+                \
+    Out.ar(outbus, xout);\
+    \
 \}).load(s);\
-)}
+) */}

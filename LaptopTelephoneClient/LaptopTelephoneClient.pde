@@ -270,7 +270,19 @@ public void keyPressed() {
       _sampleNum = 2;
     } else if (key == '4') {
       _sampleNum = 3;
-    }
+    } else if (key == '5') {
+      _sampleNum = 4;
+    } else if (key == '6') {
+      _sampleNum = 5;
+    } else if (key == '7') {
+      _sampleNum = 6;
+    } else if (key == '8') {
+      _sampleNum = 7;
+    } else if (key == '9') {
+      _sampleNum = 8;
+    } else if (key == '0') {
+      _sampleNum = 9;
+    }      
   }
 }
 

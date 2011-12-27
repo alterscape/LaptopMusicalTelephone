@@ -50,13 +50,14 @@ void setup() {
              
  //init my telephone networks!
  network = new TelephoneNetwork(); 
-// network.testWithPartChair(2, 2);
+ network.testWithPartChair(1, 1);
  senderAssign = new TelephoneSenderAssignment(network);
  // score has to come after network, because score depends on network.
   
-  /*
+  
  TelephoneTangoScore score = new TelephoneTangoScore();
  
+ /*
  int measures = score.createPartI(0); 
  measures = score.createPartIITest(measures);
  measures = score.createPartIII(measures);
@@ -69,8 +70,10 @@ void setup() {
  measures = score.createPartIITest(measures);
  measures = score.createPartIII(measures); 
 */
+  int measures = score.createPartIITest(0);
+
  
- //println(score); 
+ println(score); 
 
 }
 
@@ -100,15 +103,15 @@ private void startTelephoneTango() {
   score = new TelephoneTangoScore(); 
 
 //current full score
- int measures = score.createPartI(0); 
- measures = score.createPartIITest(measures);
- measures = score.createPartIII(measures);
+ int measures = score.createPartIITest(0); 
+ //measures = score.createPartIITest(measures);
+ //measures = score.createPartIII(measures);
  
- measures = score.createPartI(measures);  
+ //measures = score.createPartI(measures);  
  measures = score.createPartIITest(measures); 
  measures = score.createPartIII(measures);
  
- measures = score.createPartI(measures); 
+ //measures = score.createPartI(measures); 
  measures = score.createPartIITest(measures);
  measures = score.createPartIII(measures);  
 

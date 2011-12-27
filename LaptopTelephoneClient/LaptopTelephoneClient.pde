@@ -102,6 +102,7 @@ private long _resendCheckDelay = 500;
 private int _metroColor = 255;
 
 private Synth synth;
+private Synth onsetDetection; 
 
 private ArrayList<MeasureResendAttempts> waitingAckQueue = new ArrayList<MeasureResendAttempts>(); //this is fucked up YO
 
@@ -116,6 +117,7 @@ void setup() {
   oscP5.plug(this, "waitingForNextIp", UR_WAITING_ADDR);
   oscP5.plug(this, "errorReceived",ERROR_ADDR);
   oscP5.plug(this, "ackReceived", GOTTEN_ADDR);  
+  oscP5.plug(this, "onsets", ONSETS_ADDR);
   
   // the multicast listener handles metronome events
   OscProperties multicastProps = new OscProperties();
@@ -131,6 +133,10 @@ void setup() {
   
   //okay now load shit so there's not that first delay!! (in Supercollider code)
   Server.init(); 
+
+ //init onset detection 
+  onsetDetection = new Synth("onsetDetection");
+  onsetDetection.create(); 
 }
 
 void draw() {
@@ -138,7 +144,7 @@ void draw() {
   //check resend stuffz  NOW
   if (_lastResendCheckTime < millis()) {
     _lastResendCheckTime = millis() + _resendCheckDelay;
-    resendMeasure();
+    resendMeasure(); 
   }
   
   
@@ -474,6 +480,14 @@ void ackReceived(int start, int part, int chair)
     waitingAckQueue.remove(index-1); 
   }
   
+}
+
+//receive OSC from SC when there's an onset
+void onsets()
+{
+   _keypressTime = millis();   
+   playNote(); 
+   noteHappened(_keypressTime);
 }
 
 /**

@@ -8,6 +8,7 @@
 \f0\fs24 \cf2 //Courtney Brown --> my standard synth shit for TelephoneTango\cf3 \
 \
 \
+\
 \cf2 //Test Tone --> is my supercollider shiz werkin'?\cf3 \
 (\
 \{\cf4 SinOsc\cf3 .ar(440)\}.play;\
@@ -18,7 +19,7 @@
 \cf4 SynthDef\cf3 (\cf5 \\playPotsAndPans\cf3 , \{ \cf4 | whichPot = 0, outbus = 1, amp = 1, loop = 0,\
                         pan = 0, rate = 1.0, pitch_index = 1, bandwidth_ratio = 0.5, trig=0 |\cf3 \
         \
-        \cf4 var\cf3  data, sndFile, pots, path, index, playing;\
+        \cf4 var\cf3  data, sndFile, pots, path, index, playing, xout;\
         index = 0;\
         pots = [\cf6 "sounds/grater2.wav"\cf3 , \cf6 "sounds/potlid2.wav"\cf3 , \cf6 "sounds/bigpot2.wav"\cf3 , \cf6 "sounds/pan3.wav"\cf3 , \
         \cf6 "sounds/bigpot4.wav"\cf3 , \cf6 "sounds/bigpot6.wav"\cf3 , \cf6 "sounds/orgdicer3.wav"\cf3 , \cf6 "sounds/grater3.wav"\cf3 , \
@@ -28,47 +29,101 @@
         \cf2 //add pitch in the preceding synth def    \cf3 \
       \
         \
-          sndFile = \cf4 Array\cf3 .fill(pots.size, \{ \cf4 |i|\cf3  \cf4 var\cf3  buf; buf = \cf4 Buffer\cf3 .read(s, pots[i]);  buf.bufnum; \} );\
+        sndFile = \cf4 Array\cf3 .fill(pots.size, \{ \cf4 |i|\cf3  \cf4 var\cf3  buf; buf = \cf4 Buffer\cf3 .read(s, pots[i]);  buf.bufnum; \});\
+       \cf2 // EnvGen.kr(Env.n);\cf3 \
           \
-         data = \cf4 PlayBuf\cf3 .ar(1, \cf4 Select\cf3 .kr(whichPot, sndFile));\
-          \cf4 FreeSelfWhenDone\cf3 .kr(data);\
-          \cf4 Out\cf3 .ar(outbus, \cf4 Pan2\cf3 .ar(data, pan, amp));\
-          \cf4 Out\cf3 .ar(0, \cf4 Pan2\cf3 .ar(data, pan, amp)); \
+        data = \cf4 PlayBuf\cf3 .ar(1, \cf4 Select\cf3 .kr(whichPot, sndFile), loop:0);\
+        \
+        xout = \cf4 Convolution\cf3 .ar(\cf4 AudioIn\cf3 .ar(1), data, 1024, 0.5);\
+        \
+        \cf4 FreeSelfWhenDone\cf3 .kr(data);\
+        \cf4 Out\cf3 .ar(outbus, \cf4 Pan2\cf3 .ar(xout, pan, amp));\
+        \cf4 Out\cf3 .ar(0, \cf4 Pan2\cf3 .ar(xout, pan, amp));  \
 \
-\}).load(s);\
-)\
+\}).store;\
 \
-\cf2 //Test yr. shiz here\cf3 \
-(\
-a = \cf4 Synth\cf3 (\cf5 \\playPotsAndPans\cf3 , [\cf5 \\whichPot\cf3 , 9]);\
-)\
+\cf2 //-------------------------------------------------------------------------------------\cf3 \
+\cf2 //-------------------------------------------------------------------------------------\cf3 \
 \
+\cf4 SynthDef\cf3 (\cf5 \\onsetDetection\cf3 , \{\
+\
+\pard\pardeftab560
+\cf3 	\cf4 var\cf3  sig, chain, onsets, buffer, pips;\
+	\cf4 var\cf3  threshes = (0.1, 0.2 .. 1);\
+	\
+	\
+	buffer = \cf4 Buffer\cf3 .alloc(s, 512);\
+	sig = \cf4 AudioIn\cf3 .ar(1);	\
+	chain = \cf4 FFT\cf3 (buffer, sig);						  \
+	onsets = \cf4 Onsets\cf3 .kr(chain, 0.5, \cf5 \\rcomplex\cf3 , relaxtime:0.1); \cf2 //onset sensitivity\cf3 \
+	\cf4 SendReply\cf3 .kr(\cf4 Impulse\cf3 .kr(200), \cf5 \\onsets\cf3 , [onsets], 1906);\
+	\
+\}\
+\pard\pardeftab720
+\cf3 ).store; \
+\
+\cf2 //-------------------------------------------------------------------------------------\cf3 \
 \
 \
 \cf2 //not used yet.  will be used as well, fyi\cf3 \
-\cf2 /*(\
-SynthDef(\\audio_reson_out, \{ |inBus = 1, bufnum = 0, outbus = 0, amp = 0.5, loop = 0,\
-                        pan = 0, rate = 1.0, pitch_index = 1, bandwidth_ratio = 0.01|\
+(\
+\cf4 SynthDef\cf3 (\cf5 \\audio_reson_out\cf3 , \{ \cf4 |inBus = 1, bufnum = 0, outbus = 0, amp = 0.5, loop = 0,\
+                        pan = 0, rate = 1.0, pitch_index = 1, bandwidth_ratio = 0.01|\cf3 \
                         \
-        var xout, in_amp, d_pitches, d_pitch_indices, octave;\
-        in_amp = In.ar(inBus);\
+        \cf4 var\cf3  xout, in_amp, d_pitches, d_pitch_indices, octave;\
+        in_amp = \cf4 In\cf3 .ar(inBus);\
         octave = 1;\
         \
-\pard\pardeftab560
-\cf2 //	d_pitch_indices = [10, 2, 7, 9, 2, 8, 2, 9, 7, 7, 2, 8, 8];        \
-//	d_pitches = Array.fill(d_pitch_indices[0], \{(62+(12*octave)).midicps\});\
-//	1.for(d_pitch_indices.size-1, \{ |i|d_pitches = 	d_pitches.addAll(Array.fill(d_pitch_indices[i], \{(62+i\
-//	+(12*octave)).midicps\}))\}) ;\
-\pard\pardeftab720
-\cf2         \
     xout = 0;\
-    6.for(1, \{ |i|\
+    6.for(1, \{ \cf4 |i|\cf3 \
 \pard\pardeftab560
-\cf2 		xout = xout + Resonz.ar(in_amp, Select.kr(pitch_index, d_pitches)*i, bandwidth_ratio, 1/(i+1)); \
+\cf3 		xout = xout + \cf4 Resonz\cf3 .ar(in_amp, \cf4 Select\cf3 .kr(pitch_index, d_pitches)*i, bandwidth_ratio, 1/(i+1)); \
 \pard\pardeftab720
-\cf2 	\}); \
+\cf3 	\}); \
                 \
-    Out.ar(outbus, xout);\
+    \cf4 Out\cf3 .ar(outbus, xout*10);\
     \
-\}).load(s);\
-) */}
+\}).store;\
+\
+\cf2 //---------------------------------------------------------------------------------------------\cf3 \
+\pard\pardeftab560\li1140\fi-1140
+\cf3 \
+\pard\pardeftab560
+\cf3 o = \cf4 OSCresponder\cf3 (\cf4 nil\cf3 , \cf5 \\onsets\cf3 , \{ \
+	\cf4 |t, r, msg|\cf3  \
+\pard\pardeftab560\li1140\fi-1140
+\cf3 	b = \cf4 NetAddr\cf3 .new(\cf6 "127.0.0.1"\cf3 , 6449); \cf2 // create the NetAddr\cf3 \
+	(msg[3]==1).if(\
+	\{\
+		msg[3].post; \cf6 "  "\cf3 .post; \
+	 	b.sendMsg(\cf6 "/lorkas/ltm/onsets"\cf3 );\
+	 	\
+	 \});	\
+\pard\pardeftab560
+\cf3 \}).add;\
+\pard\pardeftab720
+\cf3 \
+)\
+\
+\cf2 //-------------------------------------------------------------------------------------\cf3 \
+\cf2 //-------------------------------------------------------------------------------------\cf3 \
+\pard\pardeftab560
+\cf3 \
+o.remove;\
+\pard\pardeftab720
+\cf3 \
+\
+\cf2 //Test yr. shiz here\cf3 \
+(\
+\
+a = \cf4 Synth\cf3 (\cf5 \\playPotsAndPans\cf3 , [\cf5 \\whichPot\cf3 , 9]);\
+\
+\pard\pardeftab560
+\cf3 m = \cf4 Synth\cf3 (\cf5 \\onsetDetection\cf3 );\
+n = \cf4 Synth\cf3 (\cf5 \\audio_reson_out\cf3 ); \
+\
+\pard\pardeftab720
+\cf3 m.free;\
+n.free;\
+\
+) }
